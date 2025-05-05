@@ -1,2 +1,4 @@
 # STM32F446RE_Drivers
-Repo for embedded drivers forSTMf446xx that I've developed as I learn bare metal embedded programming. 
+This repo is for the embedded drivers of STMf446xx that I've developed as I learn bare metal embedded programming. 
+
+ 

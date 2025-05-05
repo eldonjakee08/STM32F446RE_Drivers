@@ -60,8 +60,8 @@ all: main-build
 main-build: 010STM32F446xx_Drivers.elf secondary-outputs
 
 # Tool invocations
-010STM32F446xx_Drivers.elf 010STM32F446xx_Drivers.map: $(OBJS) $(USER_OBJS) D:\Embedded-C\MCUProjects\010STM32F446RE_Drivers\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "010STM32F446xx_Drivers.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Embedded-C\MCUProjects\010STM32F446RE_Drivers\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="010STM32F446xx_Drivers.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+010STM32F446xx_Drivers.elf 010STM32F446xx_Drivers.map: $(OBJS) $(USER_OBJS) D:\Embedded-C\MCUProjects\Git\STM32F446RE_Drivers\010STM32F446RE_Drivers\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "010STM32F446xx_Drivers.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Embedded-C\MCUProjects\Git\STM32F446RE_Drivers\010STM32F446RE_Drivers\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="010STM32F446xx_Drivers.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
