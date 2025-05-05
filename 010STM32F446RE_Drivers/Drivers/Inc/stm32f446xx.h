@@ -574,14 +574,6 @@ typedef struct
 #define I2C_CR2_DMAEN		11
 #define I2C_CR2_LAST		12
 
-#define I2C_OAR1_ADD0		0
-#define I2C_OAR1_ADD7_1		1
-#define I2C_OAR1_ADD9_8		8
-#define I2C_OAR1_ADDMODE	15
-
-#define I2C_OAR2_ENDUAL		0
-#define I2C_OAR2_ADD2		1
-
 #define I2C_SR1_SB			0
 #define I2C_SR1_ADDR		1
 #define I2C_SR1_BTF			2
@@ -604,7 +596,13 @@ typedef struct
 #define I2C_SR2_SMB_DEFAULT		5
 #define I2C_SR2_SMB_HOST		6
 #define I2C_SR2_DUALF			7
-#define I2C_ST2_PEC15_8			8
+#define I2C_SR2_PEC15_8			8
+
+#define I2C_CCR_CCR11_0			0
+#define I2C_CCR_DUTY			14
+#define I2C_CCR_FS				15
+
+#define I2C_TRISE_TRISE5_0		0
 
 #include 	"stm32f446xx_gpio_driver.h"
 #include 	"stm32f446xx_spi_driver.h"
