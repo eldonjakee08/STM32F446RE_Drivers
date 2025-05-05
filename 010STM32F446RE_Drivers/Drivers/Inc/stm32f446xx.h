@@ -324,6 +324,13 @@ typedef struct
 #define SPI2		((SPI_RegDef_t*)SPI2_I2S2_BASEADDR)		//SPI2 base address typecasted as a pointer of type SPI_RegDef_t
 #define SPI3		((SPI_RegDef_t*)SPI3_I2S3_BASEADDR)		//SPI3 base address typecasted as a pointer of type SPI_RegDef_t
 #define SPI4		((SPI_RegDef_t*)SPI4_BASEADDR)		//SPI4 base address typecasted as a pointer of type SPI_RegDef_t
+
+#define I2C1		((I2C_RegDef_t)*I2C1_BASEADDR)		//I2C1 base address typecasted as a pointer of type I2C_RegDef_t (represent the physical registers of I2C peripheral)
+#define I2C2		((I2C_RegDef_t)*I2C2_BASEADDR)
+#define I2C3		((I2C_RegDef_t)*I2C3_BASEADDR)
+
+
+
 /*
  * Clock Enable macros for GPIOx peripherals
  */
@@ -543,7 +550,7 @@ typedef struct
 #define SPI_EVENT_OVR_ERR		3
 
 
-#include "stm32f446xx_gpio_driver.h"
-#include "stm32f446xx_spi_driver.h"
-
+#include 	"stm32f446xx_gpio_driver.h"
+#include 	"stm32f446xx_spi_driver.h"
+#include 	"stm32f446xx_i2c_driver.h"
 #endif /* INC_STM32F446XX_H_ */
