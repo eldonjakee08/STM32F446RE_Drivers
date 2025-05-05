@@ -164,7 +164,7 @@ Discarded input sections
  .debug_macro   0x00000000       0x6a ./Drivers/Src/stm32f446xx_spi_driver.o
  .debug_macro   0x00000000      0x1df ./Drivers/Src/stm32f446xx_spi_driver.o
  .debug_macro   0x00000000      0x190 ./Drivers/Src/stm32f446xx_spi_driver.o
- .debug_macro   0x00000000      0x5c9 ./Drivers/Src/stm32f446xx_spi_driver.o
+ .debug_macro   0x00000000      0x72e ./Drivers/Src/stm32f446xx_spi_driver.o
  .debug_macro   0x00000000      0x124 ./Drivers/Src/stm32f446xx_spi_driver.o
  .debug_macro   0x00000000       0x94 ./Drivers/Src/stm32f446xx_spi_driver.o
  .group         0x00000000        0xc ./Src/004SPI_Receive.o
@@ -208,7 +208,7 @@ Discarded input sections
  .debug_macro   0x00000000       0x6a ./Src/004SPI_Receive.o
  .debug_macro   0x00000000      0x1df ./Src/004SPI_Receive.o
  .debug_macro   0x00000000      0x190 ./Src/004SPI_Receive.o
- .debug_macro   0x00000000      0x5c9 ./Src/004SPI_Receive.o
+ .debug_macro   0x00000000      0x72e ./Src/004SPI_Receive.o
  .debug_macro   0x00000000      0x124 ./Src/004SPI_Receive.o
  .group         0x00000000        0xc ./Src/syscalls.o
  .group         0x00000000        0xc ./Src/syscalls.o
@@ -1062,88 +1062,88 @@ LOAD C:/ST/STM32CubeIDE_1.18.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_rnglists
                 0x000001a8       0x19 ./Startup/startup_stm32f446retx.o
 
-.debug_macro    0x00000000     0x3556
- .debug_macro   0x00000000       0xa3 ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x000000a3      0xad8 ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x00000b7b       0x22 ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x00000b9d       0x8e ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x00000c2b       0x51 ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x00000c7c      0x103 ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x00000d7f       0x6a ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x00000de9      0x1df ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x00000fc8      0x190 ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x00001158      0x5c9 ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x00001721       0x94 ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x000017b5      0x124 ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_macro   0x000018d9       0xa3 ./Drivers/Src/stm32f446xx_spi_driver.o
- .debug_macro   0x0000197c      0x1bf ./Src/004SPI_Receive.o
- .debug_macro   0x00001b3b       0x9a ./Src/004SPI_Receive.o
- .debug_macro   0x00001bd5       0x61 ./Src/004SPI_Receive.o
- .debug_macro   0x00001c36       0x24 ./Src/004SPI_Receive.o
- .debug_macro   0x00001c5a       0x43 ./Src/004SPI_Receive.o
- .debug_macro   0x00001c9d       0x34 ./Src/004SPI_Receive.o
- .debug_macro   0x00001cd1       0x16 ./Src/004SPI_Receive.o
- .debug_macro   0x00001ce7       0x3c ./Src/004SPI_Receive.o
- .debug_macro   0x00001d23      0x370 ./Src/004SPI_Receive.o
- .debug_macro   0x00002093       0x10 ./Src/004SPI_Receive.o
- .debug_macro   0x000020a3       0x16 ./Src/004SPI_Receive.o
- .debug_macro   0x000020b9       0x4a ./Src/004SPI_Receive.o
- .debug_macro   0x00002103       0x34 ./Src/004SPI_Receive.o
- .debug_macro   0x00002137       0x10 ./Src/004SPI_Receive.o
- .debug_macro   0x00002147       0x58 ./Src/004SPI_Receive.o
- .debug_macro   0x0000219f       0x8e ./Src/004SPI_Receive.o
- .debug_macro   0x0000222d       0x1c ./Src/004SPI_Receive.o
- .debug_macro   0x00002249      0x185 ./Src/004SPI_Receive.o
- .debug_macro   0x000023ce       0x16 ./Src/004SPI_Receive.o
- .debug_macro   0x000023e4       0x16 ./Src/004SPI_Receive.o
- .debug_macro   0x000023fa      0x146 ./Src/004SPI_Receive.o
- .debug_macro   0x00002540      0x286 ./Src/syscalls.o
- .debug_macro   0x000027c6       0x5b ./Src/syscalls.o
- .debug_macro   0x00002821       0x94 ./Src/syscalls.o
- .debug_macro   0x000028b5       0x57 ./Src/syscalls.o
- .debug_macro   0x0000290c       0x10 ./Src/syscalls.o
- .debug_macro   0x0000291c       0x10 ./Src/syscalls.o
- .debug_macro   0x0000292c       0x10 ./Src/syscalls.o
- .debug_macro   0x0000293c       0x10 ./Src/syscalls.o
- .debug_macro   0x0000294c       0x1c ./Src/syscalls.o
- .debug_macro   0x00002968       0x52 ./Src/syscalls.o
- .debug_macro   0x000029ba       0x22 ./Src/syscalls.o
- .debug_macro   0x000029dc       0x10 ./Src/syscalls.o
- .debug_macro   0x000029ec       0x52 ./Src/syscalls.o
- .debug_macro   0x00002a3e       0xcf ./Src/syscalls.o
- .debug_macro   0x00002b0d       0x1c ./Src/syscalls.o
- .debug_macro   0x00002b29       0x3d ./Src/syscalls.o
- .debug_macro   0x00002b66       0x35 ./Src/syscalls.o
- .debug_macro   0x00002b9b      0x12c ./Src/syscalls.o
- .debug_macro   0x00002cc7       0x16 ./Src/syscalls.o
- .debug_macro   0x00002cdd       0x16 ./Src/syscalls.o
- .debug_macro   0x00002cf3       0x29 ./Src/syscalls.o
- .debug_macro   0x00002d1c       0x10 ./Src/syscalls.o
- .debug_macro   0x00002d2c      0x242 ./Src/syscalls.o
- .debug_macro   0x00002f6e       0x1c ./Src/syscalls.o
- .debug_macro   0x00002f8a       0x10 ./Src/syscalls.o
- .debug_macro   0x00002f9a      0x18a ./Src/syscalls.o
- .debug_macro   0x00003124       0x16 ./Src/syscalls.o
- .debug_macro   0x0000313a       0xce ./Src/syscalls.o
- .debug_macro   0x00003208      0x112 ./Src/sysmem.o
- .debug_macro   0x0000331a      0x23c ./Src/sysmem.o
+.debug_macro    0x00000000     0x36dc
+ .debug_macro   0x00000000       0xae ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x000000ae      0xad8 ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00000b86       0x22 ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00000ba8       0x8e ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00000c36       0x51 ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00000c87      0x103 ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00000d8a       0x6a ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00000df4      0x1df ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00000fd3      0x190 ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00001163      0x72e ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00001891       0x94 ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00001925      0x124 ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_macro   0x00001a49       0xae ./Drivers/Src/stm32f446xx_spi_driver.o
+ .debug_macro   0x00001af7      0x1ca ./Src/004SPI_Receive.o
+ .debug_macro   0x00001cc1       0x9a ./Src/004SPI_Receive.o
+ .debug_macro   0x00001d5b       0x61 ./Src/004SPI_Receive.o
+ .debug_macro   0x00001dbc       0x24 ./Src/004SPI_Receive.o
+ .debug_macro   0x00001de0       0x43 ./Src/004SPI_Receive.o
+ .debug_macro   0x00001e23       0x34 ./Src/004SPI_Receive.o
+ .debug_macro   0x00001e57       0x16 ./Src/004SPI_Receive.o
+ .debug_macro   0x00001e6d       0x3c ./Src/004SPI_Receive.o
+ .debug_macro   0x00001ea9      0x370 ./Src/004SPI_Receive.o
+ .debug_macro   0x00002219       0x10 ./Src/004SPI_Receive.o
+ .debug_macro   0x00002229       0x16 ./Src/004SPI_Receive.o
+ .debug_macro   0x0000223f       0x4a ./Src/004SPI_Receive.o
+ .debug_macro   0x00002289       0x34 ./Src/004SPI_Receive.o
+ .debug_macro   0x000022bd       0x10 ./Src/004SPI_Receive.o
+ .debug_macro   0x000022cd       0x58 ./Src/004SPI_Receive.o
+ .debug_macro   0x00002325       0x8e ./Src/004SPI_Receive.o
+ .debug_macro   0x000023b3       0x1c ./Src/004SPI_Receive.o
+ .debug_macro   0x000023cf      0x185 ./Src/004SPI_Receive.o
+ .debug_macro   0x00002554       0x16 ./Src/004SPI_Receive.o
+ .debug_macro   0x0000256a       0x16 ./Src/004SPI_Receive.o
+ .debug_macro   0x00002580      0x146 ./Src/004SPI_Receive.o
+ .debug_macro   0x000026c6      0x286 ./Src/syscalls.o
+ .debug_macro   0x0000294c       0x5b ./Src/syscalls.o
+ .debug_macro   0x000029a7       0x94 ./Src/syscalls.o
+ .debug_macro   0x00002a3b       0x57 ./Src/syscalls.o
+ .debug_macro   0x00002a92       0x10 ./Src/syscalls.o
+ .debug_macro   0x00002aa2       0x10 ./Src/syscalls.o
+ .debug_macro   0x00002ab2       0x10 ./Src/syscalls.o
+ .debug_macro   0x00002ac2       0x10 ./Src/syscalls.o
+ .debug_macro   0x00002ad2       0x1c ./Src/syscalls.o
+ .debug_macro   0x00002aee       0x52 ./Src/syscalls.o
+ .debug_macro   0x00002b40       0x22 ./Src/syscalls.o
+ .debug_macro   0x00002b62       0x10 ./Src/syscalls.o
+ .debug_macro   0x00002b72       0x52 ./Src/syscalls.o
+ .debug_macro   0x00002bc4       0xcf ./Src/syscalls.o
+ .debug_macro   0x00002c93       0x1c ./Src/syscalls.o
+ .debug_macro   0x00002caf       0x3d ./Src/syscalls.o
+ .debug_macro   0x00002cec       0x35 ./Src/syscalls.o
+ .debug_macro   0x00002d21      0x12c ./Src/syscalls.o
+ .debug_macro   0x00002e4d       0x16 ./Src/syscalls.o
+ .debug_macro   0x00002e63       0x16 ./Src/syscalls.o
+ .debug_macro   0x00002e79       0x29 ./Src/syscalls.o
+ .debug_macro   0x00002ea2       0x10 ./Src/syscalls.o
+ .debug_macro   0x00002eb2      0x242 ./Src/syscalls.o
+ .debug_macro   0x000030f4       0x1c ./Src/syscalls.o
+ .debug_macro   0x00003110       0x10 ./Src/syscalls.o
+ .debug_macro   0x00003120      0x18a ./Src/syscalls.o
+ .debug_macro   0x000032aa       0x16 ./Src/syscalls.o
+ .debug_macro   0x000032c0       0xce ./Src/syscalls.o
+ .debug_macro   0x0000338e      0x112 ./Src/sysmem.o
+ .debug_macro   0x000034a0      0x23c ./Src/sysmem.o
 
-.debug_line     0x00000000     0x2c2f
- .debug_line    0x00000000      0xb99 ./Drivers/Src/stm32f446xx_gpio_driver.o
- .debug_line    0x00000b99      0x9ef ./Drivers/Src/stm32f446xx_spi_driver.o
- .debug_line    0x00001588      0x7c3 ./Src/004SPI_Receive.o
- .debug_line    0x00001d4b      0x8e6 ./Src/syscalls.o
- .debug_line    0x00002631      0x583 ./Src/sysmem.o
- .debug_line    0x00002bb4       0x7b ./Startup/startup_stm32f446retx.o
+.debug_line     0x00000000     0x2c83
+ .debug_line    0x00000000      0xbb5 ./Drivers/Src/stm32f446xx_gpio_driver.o
+ .debug_line    0x00000bb5      0xa0b ./Drivers/Src/stm32f446xx_spi_driver.o
+ .debug_line    0x000015c0      0x7df ./Src/004SPI_Receive.o
+ .debug_line    0x00001d9f      0x8e6 ./Src/syscalls.o
+ .debug_line    0x00002685      0x583 ./Src/sysmem.o
+ .debug_line    0x00002c08       0x7b ./Startup/startup_stm32f446retx.o
 
-.debug_str      0x00000000     0xc2e5
- .debug_str     0x00000000     0xc2e5 ./Drivers/Src/stm32f446xx_gpio_driver.o
-                               0x6747 (size before relaxing)
- .debug_str     0x0000c2e5     0x6783 ./Drivers/Src/stm32f446xx_spi_driver.o
- .debug_str     0x0000c2e5     0x9e40 ./Src/004SPI_Receive.o
- .debug_str     0x0000c2e5     0x9a6f ./Src/syscalls.o
- .debug_str     0x0000c2e5     0x775f ./Src/sysmem.o
- .debug_str     0x0000c2e5       0x8e ./Startup/startup_stm32f446retx.o
+.debug_str      0x00000000     0xc687
+ .debug_str     0x00000000     0xc687 ./Drivers/Src/stm32f446xx_gpio_driver.o
+                               0x6ae9 (size before relaxing)
+ .debug_str     0x0000c687     0x6b25 ./Drivers/Src/stm32f446xx_spi_driver.o
+ .debug_str     0x0000c687     0xa1e2 ./Src/004SPI_Receive.o
+ .debug_str     0x0000c687     0x9a6f ./Src/syscalls.o
+ .debug_str     0x0000c687     0x775f ./Src/sysmem.o
+ .debug_str     0x0000c687       0x8e ./Startup/startup_stm32f446retx.o
 
 .comment        0x00000000       0x43
  .comment       0x00000000       0x43 ./Drivers/Src/stm32f446xx_gpio_driver.o
