@@ -602,8 +602,6 @@ typedef struct
 #define I2C_CCR_DUTY			14
 #define I2C_CCR_FS				15
 
-#define I2C_TRISE_TRISE5_0		0
-
 #include 	"stm32f446xx_gpio_driver.h"
 #include 	"stm32f446xx_spi_driver.h"
 #include 	"stm32f446xx_i2c_driver.h"
