@@ -9,5 +9,17 @@
 #define INC_STM32F446XX_I2C_DRIVER_H_
 
 
+typedef struct
+{
+
+}I2C_Config_t;
+
+
+typedef struct
+{
+
+
+}I2C_Handle_t;
+
 
 #endif /* INC_STM32F446XX_I2C_DRIVER_H_ */

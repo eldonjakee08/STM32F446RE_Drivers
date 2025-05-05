@@ -286,6 +286,25 @@ typedef struct
 }SPI_RegDef_t;
 
 
+/*
+ * peripheral register definition of I2C
+ */
+typedef struct
+{
+	__vo uint32_t CR1;		//I2C control register 1 (I2C_CR1)
+	__vo uint32_t CR2;		//I2C control register 2 (I2C_CR2)
+	__vo uint32_t OAR1;		//I2C own address register 1 (I2C_OAR1)
+	__vo uint32_t OAR2;		//I2C own address register 2 (I2C_OAR2)
+	__vo uint32_t DR;		//I2C data register (I2C_DR)
+	__vo uint32_t SR1;		//I2C status register 1 (I2C_SR1)
+	__vo uint32_t SR2;		//I2C status register 2 (I2C_SR2)
+	__vo uint32_t CCR;		//I2C clock control register (I2C_CCR)
+	__vo uint32_t TRISE;	//I2C TRISE register (I2C_TRISE)
+	__vo uint32_t FLTR;		//I2C FLTR register (I2C_FLTR)
+
+}I2C_RegDef_t;
+
+
 
 /*stm32f446rexx pointer macros for ease of typing when initializing the pointer values*/
 #define GPIOA 		((GPIO_RegDef_t*)GPIOA_BASEADDR) /*GPIOA_BASEADDR typecasted as a pointer of type GPIO_RegDef_t */
