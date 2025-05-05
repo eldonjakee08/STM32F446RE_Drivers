@@ -325,9 +325,9 @@ typedef struct
 #define SPI3		((SPI_RegDef_t*)SPI3_I2S3_BASEADDR)		//SPI3 base address typecasted as a pointer of type SPI_RegDef_t
 #define SPI4		((SPI_RegDef_t*)SPI4_BASEADDR)		//SPI4 base address typecasted as a pointer of type SPI_RegDef_t
 
-#define I2C1		((I2C_RegDef_t)*I2C1_BASEADDR)		//I2C1 base address typecasted as a pointer of type I2C_RegDef_t (represent the physical registers of I2C peripheral)
-#define I2C2		((I2C_RegDef_t)*I2C2_BASEADDR)
-#define I2C3		((I2C_RegDef_t)*I2C3_BASEADDR)
+#define I2C1		((I2C_RegDef_t*)I2C1_BASEADDR)		//I2C1 base address typecasted as a pointer of type I2C_RegDef_t (represent the physical registers of I2C peripheral)
+#define I2C2		((I2C_RegDef_t*)I2C2_BASEADDR)
+#define I2C3		((I2C_RegDef_t*)I2C3_BASEADDR)
 
 
 
@@ -459,6 +459,14 @@ typedef struct
 
 
 /*
+ * Resets the I2C peripherals with the use of RCC APB1 peripheral reset register
+ */
+#define I2C1_REG_RESET()		do{ (RCC->APB1_RSTR |= (1 << 21) ); (RCC->APB2_RSTR &= ~(1 << 21) );} while(0)
+#define I2C2_REG_RESET()		do{ (RCC->APB1_RSTR |= (1 << 22) ); (RCC->APB2_RSTR &= ~(1 << 22) );} while(0)
+#define I2C3_REG_RESET()		do{ (RCC->APB1_RSTR |= (1 << 23) ); (RCC->APB2_RSTR &= ~(1 << 23) );} while(0)
+
+
+/*
  * This macro translates the GPIO port base address to SYSCFG EXTI code for programming the SYSCFG_EXTICR peripheral register
  * This macro definition accepts an input parameter, which is the 1st time I've encountered this.
  * This uses ternary operator, if x == GPIOA is true then it returns the "0" value, if statement is false it moves on
@@ -481,6 +489,12 @@ typedef struct
 		(x == SPI2)?1:\
 				(x == SPI3)?2:\
 						(x == SPI4)?3:0)
+
+
+#define I2C_BASEADDR_TO_CODE(x)	  (	(x == I2C1)?0:\
+		(x == I2C2)?1:\
+				(x == I2C3)?2:0)
+
 
 
 /*

@@ -58,14 +58,14 @@ typedef struct
 /*
  * SPI Peripheral Clock set-up
  */
-void I2C_PeripheralClkCtrl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
+void I2C_PeripheralClkCtrl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi); //DONE
 
 
 /*
  * SPI Initialization & De-initialization
  */
 void I2C_Init(I2C_Handle_t *pI2CHandle);
-void I2C_DeInit(I2C_RegDef_t *pI2Cx);
+void I2C_DeInit(I2C_RegDef_t *pI2Cx); //DONE
 
 
 /*
@@ -78,7 +78,7 @@ void I2C_DeInit(I2C_RegDef_t *pI2Cx);
  * Other peripheral APIs
  */
 uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName);
-void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
+void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi); //DONE
 
 
 

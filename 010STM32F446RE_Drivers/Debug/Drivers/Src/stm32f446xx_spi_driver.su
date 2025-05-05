@@ -1,7 +1,7 @@
 ../Drivers/Src/stm32f446xx_spi_driver.c:31:6:SPI_PeripheralClkCtrl	24	static
 ../Drivers/Src/stm32f446xx_spi_driver.c:92:6:SPI_Init	24	static
 ../Drivers/Src/stm32f446xx_spi_driver.c:152:6:SPI_DeInit	24	static
-../Drivers/Src/stm32f446xx_spi_driver.c:187:6:SPI_Periperal_EnDi	16	static
+../Drivers/Src/stm32f446xx_spi_driver.c:187:6:SPI_PeriperalCtrl	16	static
 ../Drivers/Src/stm32f446xx_spi_driver.c:210:6:SPI_SSI_EnDi	16	static
 ../Drivers/Src/stm32f446xx_spi_driver.c:235:6:SPI_SendData	32	static
 ../Drivers/Src/stm32f446xx_spi_driver.c:294:9:SPI_SendDataIT	32	static

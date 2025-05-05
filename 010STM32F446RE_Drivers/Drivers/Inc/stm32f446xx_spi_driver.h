@@ -110,7 +110,7 @@ void SPI_PeripheralClkCtrl(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
  */
 void SPI_Init(SPI_Handle_t *pSPIHandle);
 void SPI_DeInit(SPI_RegDef_t *pSPIx);
-void SPI_Periperal_EnDi(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
+void SPI_PeriperalCtrl(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
 void SPI_SSI_EnDi(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
 
 
