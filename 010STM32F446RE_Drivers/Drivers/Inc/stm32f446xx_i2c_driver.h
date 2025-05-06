@@ -15,7 +15,7 @@
 typedef struct
 {
 	uint8_t I2C_SCLSpeed; 		//@I2C_SCLSpeed, Sets the clock speed of the I2C bus
-	uint8_t I2C_DeviceAddress; 	//if MCU is acting as slave, user must specify the
+	uint8_t I2C_DeviceAddress; 	//if MCU is acting as slave, user must specify the address
 	uint8_t I2C_AckControl;		//@I2C_ACK_CONTROL, setting to enable the auto ACKING
 	uint8_t I2C_FMDutyCycle;	//@I2C_FM_DUTY_CYCLE, sets the duty cycle of Clock when its in "fast mode"
 

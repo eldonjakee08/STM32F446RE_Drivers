@@ -132,21 +132,30 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 	uint32_t SCLSpeed = pI2CHandle->I2C_Config.I2C_SCLSpeed;
 	uint32_t CCRVal;
 
+	//enables ACKing
+	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_ACK;
+
+	//fetches the current APB1 clock value
+	uint32_t APB1Clock = RCC_GetPCLK1Value();
+
+	//clears the I2C_CR2:FREQ5:0 bitfield just to be sure thats its clean before setting
+	pI2CHandle->pI2Cx->CR2 &= ~(63 << I2C_CR2_FREQ5_0);
+
+	//program the current APB1 clock freq into I2C_CR2:FREQ5_0
+	//divided the APB1Clock value with 1 million, only need the ten millions and millions digit
+	pI2CHandle->pI2Cx->CR2 |= (APB1Clock/1000000) << I2C_CR2_FREQ5_0;
+
+	//programs the user defined slave address to I2C_OAR1:ADD7_1 register
+	pI2CHandle->pI2Cx->OAR1 |= pI2CHandle->I2C_Config.I2C_DeviceAddress << I2C_OAR1_ADD7_1;
+
+	//set the 14th bit in OAR1 register to 1 as instructed by reference manual.
+	pI2CHandle->pI2Cx->OAR1 |= 1 << I2C_OAR1_BIT14;
+
 	//for standard mode at 100Kbps
-	if(SCLSpeed <= 100e+3)
+	if(SCLSpeed <= I2C_SCL_SPEED_STANDARD)
 	{
 		//set the MCU into master standard mode
 		pI2CHandle->pI2Cx->CCR &= ~(1 << I2C_CCR_FS);
-
-		//fetches the current APB1 clock value
-		uint32_t APB1Clock = RCC_GetPCLK1Value();
-
-		//clears the I2C_CR2:FREQ5:0 bitfield just to be sure thats its clean before setting
-		pI2CHandle->pI2Cx->CR2 &= ~(63 << I2C_CR2_FREQ5_0);
-
-		//program the current APB1 clock freq into I2C_CR2:FREQ5:0
-		//divided the APB1Clock value with 1e+6 only need the ten millions and millions digit
-		pI2CHandle->pI2Cx->CR2 |= (APB1Clock/1000000) << I2C_CR2_FREQ5_0;
 
 		//calculate the needed CCR value
 		CCRVal = (1/SCLSpeed) / (2 * (1/APB1Clock) );
@@ -157,22 +166,13 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 	//for fast mode 200kbs and 400kbps
 	else{
 		switch(SCLSpeed){
+
 		case I2C_SCL_SPEED_FAST2K:
 			//set the MCU into master fast mode
 			pI2CHandle->pI2Cx->CCR |= 1 << I2C_CCR_FS;
 
 			//sets the DUTY = 0, tlow/thigh = 2.
 			pI2CHandle->pI2Cx->CCR &= ~(1<<I2C_CCR_DUTY);
-
-			//fetches the current APB1 clock value
-			uint32_t APB1Clock = RCC_GetPCLK1Value();
-
-			//clears the I2C_CR2:FREQ5:0 bitfield just to be sure thats its clean before setting
-			pI2CHandle->pI2Cx->CR2 &= ~(63 << I2C_CR2_FREQ5_0);
-
-			//program the current APB1 clock freq into I2C_CR2:FREQ5:0
-			//divided the APB1Clock value with 1 million only need the ten millions and millions digit
-			pI2CHandle->pI2Cx->CR2 |= (APB1Clock/1000000) << I2C_CR2_FREQ5_0;
 
 			//calculates the needed CCR value
 			CCRVal = (1/SCLSpeed) / (3 * (1/APB1Clock) );
@@ -188,28 +188,20 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 			//sets the DUTY = 1, tlow/thigh = 16/9.
 			pI2CHandle->pI2Cx->CCR |= 1<<I2C_CCR_DUTY;
 
-			//fetches the current APB1 clock value
-			uint32_t APB1Clock = RCC_GetPCLK1Value();
-
-			//clears the I2C_CR2:FREQ5:0 bitfield just to be sure thats its clean before setting
-			pI2CHandle->pI2Cx->CR2 &= ~(63 << I2C_CR2_FREQ5_0);
-
-			//program the current APB1 clock freq into I2C_CR2:FREQ5:0
-			//divided the APB1Clock value with 1 million only need the ten millions and millions digit
-			pI2CHandle->pI2Cx->CR2 |= (APB1Clock/1000000) << I2C_CR2_FREQ5_0;
-
 			//calculates the needed CCR value
 			CCRVal = (1/SCLSpeed) / (25 * (1/APB1Clock) );
 
 			//programs the calculated CCR value into the CCR register
 			pI2CHandle->pI2Cx->CCR |= CCRVal << I2C_CCR_CCR11_0;
 			break;
+
 		default:
 			break;
 		}
-
-
 	}
+
+	//enable ACKing
+
 }
 
 
