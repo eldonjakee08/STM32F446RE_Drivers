@@ -2,4 +2,7 @@
 ../Drivers/Src/stm32f446xx_i2c_driver.c:76:6:I2C_PeripheralControl	16	static
 ../Drivers/Src/stm32f446xx_i2c_driver.c:97:6:I2C_DeInit	24	static
 ../Drivers/Src/stm32f446xx_i2c_driver.c:130:6:I2C_Init	32	static
-../Drivers/Src/stm32f446xx_i2c_driver.c:225:10:RCC_GetPCLK1Value	24	static
+../Drivers/Src/stm32f446xx_i2c_driver.c:222:6:I2C_MasterSendData	40	static
+../Drivers/Src/stm32f446xx_i2c_driver.c:277:10:RCC_GetPCLK1Value	24	static
+../Drivers/Src/stm32f446xx_i2c_driver.c:332:9:I2C_GetSR1FlagStatus	24	static
+../Drivers/Src/stm32f446xx_i2c_driver.c:354:9:I2C_GetSR2FlagStatus	24	static

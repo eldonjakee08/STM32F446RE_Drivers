@@ -14,6 +14,7 @@
 
 #define __vo 		volatile
 #define __weak 		__attribute__((weak))
+#define __unused	__attribute__((unused))
 
 /***************************************START: Processor Specific Details ****************************/
 /*

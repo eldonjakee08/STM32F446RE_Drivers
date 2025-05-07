@@ -62,22 +62,23 @@ void I2C_PeripheralClkCtrl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi); //DONE
 
 
 /*
- * SPI Initialization & De-initialization
+ * I2C Initialization & De-initialization
  */
 void I2C_Init(I2C_Handle_t *pI2CHandle);
 void I2C_DeInit(I2C_RegDef_t *pI2Cx); //DONE
 
 
 /*
- * SPI data send and receive
+ * I2C data send and receive
  */
-
+void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr);
 
 
 /*
  * Other peripheral APIs
  */
-uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName);
+uint8_t I2C_GetSR1FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName);
+uint8_t I2C_GetSR2FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName);
 void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi); //DONE
 uint32_t RCC_GetPCLK1Value(void);
 

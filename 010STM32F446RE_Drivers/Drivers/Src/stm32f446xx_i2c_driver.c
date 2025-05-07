@@ -176,9 +176,6 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 		//set the Fast Mode duty cycle
 		temp |= pI2CHandle->I2C_Config.I2C_FMDutyCycle << I2C_CCR_DUTY;
 
-		//programs the temp value into the CCR register
-		pI2CHandle->pI2Cx->CCR = temp;
-
 		switch(SCLSpeed){
 
 		case I2C_SCL_SPEED_FAST2K:
@@ -210,6 +207,61 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 
 }
 
+
+/*********************************************************************************************
+ * @fn			- I2C_MasterSendData
+ *
+ * #brief		- Send data thru I2C peripheral in master mode
+ *
+ * @param[in]	- I2C_Handle_t *pI2CHandle, pointer variable, input the address of the structure variable
+ *
+ * @return		- none
+ *
+ * @Note 		-
+ */
+void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr){
+
+	uint16_t dummy_read __unused =0;
+
+	//generate START condition
+	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_START;
+
+	//wait for SB flag to be set which means start bit executed successfully
+	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_SB) == 0 );
+
+	//sets the r/nw bit to write mode
+	SlaveAddr = SlaveAddr << 1;
+	SlaveAddr &= ~(1 << 0);
+
+	//write the slave address to be sent thru which also clears the SB flag.
+	pI2CHandle->pI2Cx->DR |= SlaveAddr;
+
+	//waits for ADDR flag to be set which means address bit sent successfully
+	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_ADDR) == 0 );
+
+	//dummy read from SR2 to clear the ADDR flag.
+	dummy_read = pI2CHandle->pI2Cx->SR2;
+
+	//start sending thru polling method
+	while(Len > 0){
+
+		//check if shift register TX buffer is empty, if empty write the data into data register to be sent
+		if( ((pI2CHandle->pI2Cx->SR1 >> I2C_SR1_TXE) & 0x1) == 1){
+
+			pI2CHandle->pI2Cx->DR = *pTxBuffer;
+
+			//decrements data length and increment pointer address to next byte is to be sent .
+			Len--;
+			pTxBuffer++;
+		}
+	}
+
+	//wait for TXE = 1 & BTF = 1 which means data register and shift register is empty
+	while( (I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_TXE) & I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_BTF)) == 0);
+
+	//generate the stop condition & transmission complete
+	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+}
 
 /*********************************************************************************************
  * @fn			- RCC_GetPCLK1Value
@@ -262,6 +314,57 @@ uint32_t RCC_GetPCLK1Value(void) {
 	pclk1 = (system_clk / ahb_prescaler) / apb1_prescaler;
 
 	return pclk1;
+}
+
+
+/*********************************************************************************************
+ * @fn			- I2C_GetSR1FlagStatus
+ *
+ * #brief		- fetches the current flag status of the SR1 register
+ *
+ * @param[in]	- I2C_RegDef_t *pI2Cx, pointer variable, input the address of the structure variable
+ * @param[in]	- uint8_t FlagName, input the flag name to be checked
+ *
+ * @return		- uint8_t, returns the flag status
+ *
+ * @Note 		-
+ */
+uint8_t I2C_GetSR1FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName){
+
+	//gets the flag status from SR1
+	uint8_t flag_status = (pI2Cx->SR1 >> FlagName) & 0x0001;
+
+	//return the flag status
+	return flag_status;
+}
+
+
+/*********************************************************************************************
+ * @fn			- I2C_GetSR2FlagStatus
+ *
+ * #brief		- fetches the current flag status of SR2 register
+ *
+ * @param[in]	- I2C_RegDef_t *pI2Cx, pointer variable, input the address of the structure variable
+ * @param[in]	- uint8_t FlagName, input the flag name to be checked
+ *
+ * @return		- uint8_t, returns the flag status
+ *
+ * @Note 		-
+ */
+uint8_t I2C_GetSR2FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName){
+
+	uint8_t flag_status=0;
+
+	//gets the PEC 8 bit flag status from SR2
+	if(FlagName == I2C_SR2_PEC15_8){
+		//return the flag status
+		flag_status =  ( (pI2Cx->SR2 >> FlagName) & 0x00FF );
+	} else {
+		//if not the PEC flag, then just get the 1 bit flag status from SR2
+		flag_status = (pI2Cx->SR1 >> FlagName) & 0x0001;
+	}
+
+	return flag_status;
 }
 
 
