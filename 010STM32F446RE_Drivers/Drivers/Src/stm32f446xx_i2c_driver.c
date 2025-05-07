@@ -131,6 +131,7 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 {
 	uint32_t SCLSpeed = pI2CHandle->I2C_Config.I2C_SCLSpeed;
 	uint32_t CCRVal;
+	uint8_t temp = 0;
 
 	//enables ACKing
 	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_ACK;
@@ -155,52 +156,57 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 	if(SCLSpeed <= I2C_SCL_SPEED_STANDARD)
 	{
 		//set the MCU into master standard mode
-		pI2CHandle->pI2Cx->CCR &= ~(1 << I2C_CCR_FS);
+		temp &= ~(1 << I2C_CCR_FS);
 
 		//calculate the needed CCR value
 		CCRVal = (1/SCLSpeed) / (2 * (1/APB1Clock) );
 
-		//programs the calculated CCR value into the CCR register
-		pI2CHandle->pI2Cx->CCR |= CCRVal << I2C_CCR_CCR11_0;
+		//set the CCR value
+		temp |= CCRVal << I2C_CCR_CCR11_0;
+
+		//programs the temp value into the CCR register
+		pI2CHandle->pI2Cx->CCR = temp;
 	}
 	//for fast mode 200kbs and 400kbps
 	else{
+
+		//set the MCU into master fast mode
+		temp |= 1 << I2C_CCR_FS;
+
+		//set the Fast Mode duty cycle
+		temp |= pI2CHandle->I2C_Config.I2C_FMDutyCycle << I2C_CCR_DUTY;
+
+		//programs the temp value into the CCR register
+		pI2CHandle->pI2Cx->CCR = temp;
+
 		switch(SCLSpeed){
 
 		case I2C_SCL_SPEED_FAST2K:
-			//set the MCU into master fast mode
-			pI2CHandle->pI2Cx->CCR |= 1 << I2C_CCR_FS;
-
-			//sets the DUTY = 0, tlow/thigh = 2.
-			pI2CHandle->pI2Cx->CCR &= ~(1<<I2C_CCR_DUTY);
-
 			//calculates the needed CCR value
 			CCRVal = (1/SCLSpeed) / (3 * (1/APB1Clock) );
 
-			//programs the calculated CCR value into the CCR register
-			pI2CHandle->pI2Cx->CCR |= CCRVal << I2C_CCR_CCR11_0;
+			//set the CCR value
+			temp |= CCRVal << I2C_CCR_CCR11_0;
+
+			//programs the temp value into the CCR register
+			pI2CHandle->pI2Cx->CCR = temp;
 			break;
 
 		case I2C_SCL_SPEED_FAST4k:
-			//set the MCU into master fast mode
-			pI2CHandle->pI2Cx->CCR |= 1 << I2C_CCR_FS;
-
-			//sets the DUTY = 1, tlow/thigh = 16/9.
-			pI2CHandle->pI2Cx->CCR |= 1<<I2C_CCR_DUTY;
-
 			//calculates the needed CCR value
 			CCRVal = (1/SCLSpeed) / (25 * (1/APB1Clock) );
 
-			//programs the calculated CCR value into the CCR register
-			pI2CHandle->pI2Cx->CCR |= CCRVal << I2C_CCR_CCR11_0;
+			//set the CCR value
+			temp |= CCRVal << I2C_CCR_CCR11_0;
+
+			//programs the temp value into the CCR register
+			pI2CHandle->pI2Cx->CCR = temp;
 			break;
 
 		default:
 			break;
 		}
 	}
-
-	//enable ACKing
 
 }
 
