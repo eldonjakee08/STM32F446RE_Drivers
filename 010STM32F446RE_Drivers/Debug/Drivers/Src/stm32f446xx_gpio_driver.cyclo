@@ -1,5 +1,5 @@
 ../Drivers/Src/stm32f446xx_gpio_driver.c:24:6:GPIO_PeripheralClkCtrl	26
-../Drivers/Src/stm32f446xx_gpio_driver.c:116:6:GPIO_Init	16
+../Drivers/Src/stm32f446xx_gpio_driver.c:116:6:GPIO_Init	15
 ../Drivers/Src/stm32f446xx_gpio_driver.c:259:6:GPIO_Init2	16
 ../Drivers/Src/stm32f446xx_gpio_driver.c:378:6:GPIO_DeInit	17
 ../Drivers/Src/stm32f446xx_gpio_driver.c:425:9:GPIO_ReadInputPin	1

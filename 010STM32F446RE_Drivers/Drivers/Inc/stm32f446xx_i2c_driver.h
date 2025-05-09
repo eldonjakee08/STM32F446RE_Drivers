@@ -14,7 +14,7 @@
 
 typedef struct
 {
-	uint8_t I2C_SCLSpeed; 		//@I2C_SCLSpeed, Sets the clock speed of the I2C bus
+	uint32_t I2C_SCLSpeed; 		//@I2C_SCLSpeed, Sets the clock speed of the I2C bus
 	uint8_t I2C_DeviceAddress; 	//if MCU is acting as slave, user must specify the address
 	uint8_t I2C_AckControl;		//@I2C_ACK_CONTROL, setting to enable the auto ACKING
 	uint8_t I2C_FMDutyCycle;	//@I2C_FM_DUTY_CYCLE, sets the duty cycle of Clock when its in "fast mode"
@@ -81,6 +81,7 @@ uint8_t I2C_GetSR1FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName);
 uint8_t I2C_GetSR2FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName);
 void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi); //DONE
 uint32_t RCC_GetPCLK1Value(void);
+uint8_t Get_TriseValue(I2C_Handle_t *pI2CHandle);
 
 
 

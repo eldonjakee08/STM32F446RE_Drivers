@@ -5,17 +5,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Src/004SPI_Receive.c \
+../Src/005I2C_MasterRX_SlaveArduino.c \
 ../Src/syscalls.c \
 ../Src/sysmem.c 
 
 OBJS += \
-./Src/004SPI_Receive.o \
+./Src/005I2C_MasterRX_SlaveArduino.o \
 ./Src/syscalls.o \
 ./Src/sysmem.o 
 
 C_DEPS += \
-./Src/004SPI_Receive.d \
+./Src/005I2C_MasterRX_SlaveArduino.d \
 ./Src/syscalls.d \
 ./Src/sysmem.d 
 
@@ -27,7 +27,7 @@ Src/%.o Src/%.su Src/%.cyclo: ../Src/%.c Src/subdir.mk
 clean: clean-Src
 
 clean-Src:
-	-$(RM) ./Src/004SPI_Receive.cyclo ./Src/004SPI_Receive.d ./Src/004SPI_Receive.o ./Src/004SPI_Receive.su ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+	-$(RM) ./Src/005I2C_MasterRX_SlaveArduino.cyclo ./Src/005I2C_MasterRX_SlaveArduino.d ./Src/005I2C_MasterRX_SlaveArduino.o ./Src/005I2C_MasterRX_SlaveArduino.su ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
 
 .PHONY: clean-Src
 

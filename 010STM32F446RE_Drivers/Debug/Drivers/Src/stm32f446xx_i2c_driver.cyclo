@@ -1,8 +1,9 @@
 ../Drivers/Src/stm32f446xx_i2c_driver.c:25:6:I2C_PeripheralClkCtrl	13
 ../Drivers/Src/stm32f446xx_i2c_driver.c:76:6:I2C_PeripheralControl	2
-../Drivers/Src/stm32f446xx_i2c_driver.c:97:6:I2C_DeInit	8
-../Drivers/Src/stm32f446xx_i2c_driver.c:130:6:I2C_Init	4
-../Drivers/Src/stm32f446xx_i2c_driver.c:222:6:I2C_MasterSendData	6
-../Drivers/Src/stm32f446xx_i2c_driver.c:277:10:RCC_GetPCLK1Value	5
-../Drivers/Src/stm32f446xx_i2c_driver.c:332:9:I2C_GetSR1FlagStatus	1
-../Drivers/Src/stm32f446xx_i2c_driver.c:354:9:I2C_GetSR2FlagStatus	2
+../Drivers/Src/stm32f446xx_i2c_driver.c:98:6:I2C_DeInit	8
+../Drivers/Src/stm32f446xx_i2c_driver.c:131:6:I2C_Init	4
+../Drivers/Src/stm32f446xx_i2c_driver.c:234:6:I2C_MasterSendData	7
+../Drivers/Src/stm32f446xx_i2c_driver.c:296:10:RCC_GetPCLK1Value	5
+../Drivers/Src/stm32f446xx_i2c_driver.c:350:9:Get_TriseValue	2
+../Drivers/Src/stm32f446xx_i2c_driver.c:384:9:I2C_GetSR1FlagStatus	1
+../Drivers/Src/stm32f446xx_i2c_driver.c:406:9:I2C_GetSR2FlagStatus	2

@@ -77,6 +77,7 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi)
 {
 	if (EnorDi == ENABLE) {
 		pI2Cx->CR1 |= (1 << I2C_CR1_PE); //Enable the peripheral
+
 	} else {
 		pI2Cx->CR1 &= ~(1 << I2C_CR1_PE); //Disable the peripheral
 	}
@@ -129,8 +130,10 @@ void I2C_DeInit(I2C_RegDef_t *pI2Cx)
  */
 void I2C_Init(I2C_Handle_t *pI2CHandle)
 {
+	I2C_PeripheralClkCtrl(pI2CHandle->pI2Cx, ENABLE);
+
 	uint32_t SCLSpeed = pI2CHandle->I2C_Config.I2C_SCLSpeed;
-	uint32_t CCRVal;
+	uint16_t CCRVal;
 	uint8_t temp = 0;
 
 	//enables ACKing
@@ -158,8 +161,9 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 		//set the MCU into master standard mode
 		temp &= ~(1 << I2C_CCR_FS);
 
-		//calculate the needed CCR value
-		CCRVal = (1/SCLSpeed) / (2 * (1/APB1Clock) );
+		//calculate the needed CCR , for some reason it will skip this calculation and go to
+		//infinite loop, idk why probably kay float ni sya?
+		CCRVal = APB1Clock / (2 * SCLSpeed);
 
 		//set the CCR value
 		temp |= CCRVal << I2C_CCR_CCR11_0;
@@ -180,7 +184,7 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 
 		case I2C_SCL_SPEED_FAST2K:
 			//calculates the needed CCR value
-			CCRVal = (1/SCLSpeed) / (3 * (1/APB1Clock) );
+			CCRVal = APB1Clock / (3 * SCLSpeed);
 
 			//set the CCR value
 			temp |= CCRVal << I2C_CCR_CCR11_0;
@@ -191,10 +195,10 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 
 		case I2C_SCL_SPEED_FAST4k:
 			//calculates the needed CCR value
-			CCRVal = (1/SCLSpeed) / (25 * (1/APB1Clock) );
+			CCRVal = APB1Clock / (25 * SCLSpeed);
 
 			//set the CCR value
-			temp |= CCRVal << I2C_CCR_CCR11_0;
+			//temp |= CCRVal << I2C_CCR_CCR11_0;
 
 			//programs the temp value into the CCR register
 			pI2CHandle->pI2Cx->CCR = temp;
@@ -205,6 +209,13 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 		}
 	}
 
+	//TRISE configuration
+	uint8_t trise_val;
+	trise_val = Get_TriseValue(pI2CHandle);
+
+	//programs the calculated trise value into the Trise register
+	//masked the first 6 bits only since TRISE register is only 6 bits long.
+	pI2CHandle->pI2Cx->TRISE = (trise_val & 0x3f);
 }
 
 
@@ -217,9 +228,11 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
  *
  * @return		- none
  *
- * @Note 		-
+ * @Note 		- I'm thinking of sectioning this into individual "helper" functions
+ * 	            - like one for generating START condition, one for sending data, etc. but haven't decided yet
  */
-void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr){
+void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr)
+{
 
 	uint16_t dummy_read __unused =0;
 
@@ -236,11 +249,12 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 	//write the slave address to be sent thru which also clears the SB flag.
 	pI2CHandle->pI2Cx->DR |= SlaveAddr;
 
-	//waits for ADDR flag to be set which means address bit sent successfully
+	//waits for ADDR flag to be set which means address bit sent successfully at the same time reads SR1
 	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_ADDR) == 0 );
 
 	//dummy read from SR2 to clear the ADDR flag.
 	dummy_read = pI2CHandle->pI2Cx->SR2;
+
 
 	//start sending thru polling method
 	while(Len > 0){
@@ -257,9 +271,14 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 	}
 
 	//wait for TXE = 1 & BTF = 1 which means data register and shift register is empty
-	while( (I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_TXE) & I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_BTF)) == 0);
+	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_TXE) == 0);
+	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_BTF) == 0);
 
-	//generate the stop condition & transmission complete
+
+	//cleans data register for the next transmission
+	pI2CHandle->pI2Cx->DR &= ~(0xFF);
+
+	//generate the stop condition
 	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
 }
 
@@ -314,6 +333,39 @@ uint32_t RCC_GetPCLK1Value(void) {
 	pclk1 = (system_clk / ahb_prescaler) / apb1_prescaler;
 
 	return pclk1;
+}
+
+
+/*********************************************************************************************
+ * @fn			- Get_TriseValue
+ *
+ * #brief		- calculates the Trise value to be programmed into Trise register with the curent PCLK1
+ *
+ * @param[in]	- I2C_Handle_t *pI2CHandle, structure address of the i2c handler.
+ *
+ * @return		- uint8_t, returns the calculated trise value.
+ *
+ * @Note 		-
+ */
+uint8_t Get_TriseValue(I2C_Handle_t *pI2CHandle){
+
+	uint8_t trise_val;
+	uint32_t pclk1;
+
+	uint32_t SCLSpeed = pI2CHandle->I2C_Config.I2C_SCLSpeed;
+
+	pclk1 = RCC_GetPCLK1Value();
+
+
+	if(SCLSpeed == I2C_SCL_SPEED_STANDARD){
+		//if SCLSpeed is standard mode use 1000ns as numerator as per i2c spec
+		trise_val = ( 1000e-9 * pclk1 ) + 1;
+	}else{
+		//If SCLSpeed is fast mode use 300ns as numerator as per i2c spec
+		trise_val = ( 300e-9 * pclk1 ) + 1;
+	}
+
+	return trise_val;
 }
 
 
