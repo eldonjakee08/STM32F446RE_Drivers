@@ -101,18 +101,18 @@ void EXTI15_10_IRQHandler(){
 	uint8_t cmd1 = 0x51, cmd2 = 0x52;
 
 	//sends command to retrieve the data length
-	I2C_MasterSendData(&I2C_handle, &cmd1, 1, 0x68);
+	I2C_MasterSendData(&I2C_handle, &cmd1, 1, 0x68, I2C_REPEATED_START_EN);
 
 	//receive data length from slave
-	I2C_MasterReceiveData(&I2C_handle, &len, 1, 0x68);
+	I2C_MasterReceiveData(&I2C_handle, &len, 1, 0x68, I2C_REPEATED_START_EN);
 
 	//send command to retrieve the whole length of data from slave
-	I2C_MasterSendData(&I2C_handle, &cmd2, 1, 0x68);
+	I2C_MasterSendData(&I2C_handle, &cmd2, 1, 0x68, I2C_REPEATED_START_EN);
 
 	uint8_t rxBuffer[len];
 
 	//receive whole data from slave
-	I2C_MasterReceiveData(&I2C_handle, rxBuffer, len, 0x68);
+	I2C_MasterReceiveData(&I2C_handle, rxBuffer, len, 0x68, I2C_REPEATED_START_DI);
 
 	printf("\nReceived Data: ");
 	for(uint32_t i=0; i<len; i++){

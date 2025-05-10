@@ -82,6 +82,9 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi)
 	if (EnorDi == ENABLE) {
 		pI2Cx->CR1 |= (1 << I2C_CR1_PE); //Enable the peripheral
 
+		//enables ACKing, can only be enabled when PE = 1
+		pI2Cx->CR1 |= 1 << I2C_CR1_ACK;
+
 	} else {
 		pI2Cx->CR1 &= ~(1 << I2C_CR1_PE); //Disable the peripheral
 	}
@@ -139,9 +142,6 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 	uint32_t SCLSpeed = pI2CHandle->I2C_Config.I2C_SCLSpeed;
 	uint16_t CCRVal;
 	uint8_t temp = 0;
-
-	//enables ACKing
-	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_ACK;
 
 	//fetches the current APB1 clock value
 	uint32_t APB1Clock = RCC_GetPCLK1Value();
@@ -238,7 +238,7 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
  * @Note 		- I'm thinking of sectioning this into individual "helper" functions
  * 	            - like one for generating START condition, one for sending data, etc. but haven't decided yet
  */
-void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr)
+void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN)
 {
 	uint16_t dummy_read __unused =0;
 
@@ -267,8 +267,9 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_BTF) == 0);
 
 
-	//generate the stop condition
-	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+	if(Repeated_Start_EN == I2C_REPEATED_START_DI)
+		//generate the stop condition
+		pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
 
 }
 
@@ -289,7 +290,7 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
  * @Note 		- I'm thinking of sectioning this into individual "helper" functions
  * 	            - like one for generating START condition, one for sending data, etc. but haven't decided yet
  */
-void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr)
+void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN)
 {
 	uint16_t dummy_read __unused =0;
 
@@ -318,8 +319,9 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 		//wait until  RXNE becomes 1
 		while(I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_RXNE) == 0);
 
-		//after NACK, master will generate a stop condition to end communication with slave
-		pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+		if(Repeated_Start_EN == I2C_REPEATED_START_DI)
+			//generate the stop condition
+			pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
 
 		//read data in to buffer
 		*pRxBuffer = pI2CHandle->pI2Cx->DR;
@@ -350,8 +352,9 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 				//Disable Acking so master will send NACK when receiving the last byte of data. The NACK is to tell the slave it doesn't need any more data
 				pI2CHandle->pI2Cx->CR1 &= ~(1 << I2C_CR1_ACK);
 
-				//after NACK, master will generate a stop condition to end communication with slave
-				pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+				if(Repeated_Start_EN == I2C_REPEATED_START_DI)
+					//generate the stop condition
+					pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
 			}
 
 			//read the data from data register in to buffer
