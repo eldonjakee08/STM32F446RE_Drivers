@@ -50,6 +50,12 @@ typedef struct
 #define I2C_FM_DUTY_2			0
 #define I2C_FM_DUTY_16_9		1
 
+/*
+ * Master read and write bits to slave macros
+ */
+#define I2C_MASTER_READ_BIT				1
+#define I2C_MASTER_WRITE_BIT			0
+
 /***********************************************************************************************************************
  * 									APIs supported by this driver
  * 					for more information about the APIs check the function definitions
@@ -72,7 +78,7 @@ void I2C_DeInit(I2C_RegDef_t *pI2Cx); //DONE
  * I2C data send and receive
  */
 void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr);
-
+void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr);
 
 /*
  * Other peripheral APIs

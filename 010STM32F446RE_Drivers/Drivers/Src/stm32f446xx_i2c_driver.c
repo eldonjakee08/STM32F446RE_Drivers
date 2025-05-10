@@ -10,6 +10,10 @@
 #include "stm32f446xx.h"
 
 
+static void i2c_startphase_addressphase(I2C_Handle_t *pI2CHandle, uint8_t SlaveAddr, uint8_t rw_bit);
+
+
+
 /*********************************************************************************************
  * @fn			- I2C_PeripheralClkCtrl
  *
@@ -225,6 +229,9 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
  * #brief		- Send data thru I2C peripheral in master mode
  *
  * @param[in]	- I2C_Handle_t *pI2CHandle, pointer variable, input the address of the structure variable
+ * @param[in]	- uint8_t *pTxBuffer, pointer variable, input the address of the data to be sent
+ * @param[in]	- uint32_t Len, input the length of the data to be sent
+ * @param[in]	- uint8_t SlaveAddr, input the slave address that will receive the data
  *
  * @return		- none
  *
@@ -233,28 +240,13 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
  */
 void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr)
 {
-
 	uint16_t dummy_read __unused =0;
 
-	//generate START condition
-	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_START;
-
-	//wait for SB flag to be set which means start bit executed successfully
-	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_SB) == 0 );
-
-	//sets the r/nw bit to write mode
-	SlaveAddr = SlaveAddr << 1;
-	SlaveAddr &= ~(1 << 0);
-
-	//write the slave address to be sent thru which also clears the SB flag.
-	pI2CHandle->pI2Cx->DR |= SlaveAddr;
-
-	//waits for ADDR flag to be set which means address bit sent successfully at the same time reads SR1
-	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_ADDR) == 0 );
+	//start phase and address phase start
+	i2c_startphase_addressphase(pI2CHandle, SlaveAddr, I2C_MASTER_WRITE_BIT);
 
 	//dummy read from SR2 to clear the ADDR flag.
 	dummy_read = pI2CHandle->pI2Cx->SR2;
-
 
 	//start sending thru polling method
 	while(Len > 0){
@@ -280,6 +272,101 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 
 	//generate the stop condition
 	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+}
+
+
+
+/*********************************************************************************************
+ * @fn			- I2C_MasterReceiveData
+ *
+ * #brief		- Receive data from an i2c slave
+ *
+ * @param[in]	- I2C_Handle_t *pI2CHandle, pointer variable, input the address of the structure variable
+ * @param[in]	- uint8_t *pTxBuffer, pointer variable, input the address of the data to be sent
+ * @param[in]	- uint32_t Len, input the length of the data to be sent
+ * @param[in]	- uint8_t SlaveAddr, input the slave address that will receive the data
+ *
+ * @return		- none
+ *
+ * @Note 		- I'm thinking of sectioning this into individual "helper" functions
+ * 	            - like one for generating START condition, one for sending data, etc. but haven't decided yet
+ */
+void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr)
+{
+	uint16_t dummy_read __unused =0;
+
+	//1. Generate the START condition
+
+	//2. confirm that start generation is completed by checking the SB flag in the SR1
+	//   Note: Until SB is cleared SCL will be stretched (pulled to LOW)
+
+	//3. Send the address of the slave with r/nw bit set to R(1) (total 8 bits )
+
+	//4. wait until address phase is completed by checking the ADDR flag in the SR1
+	//summed up in this one helper function i made
+	i2c_startphase_addressphase(pI2CHandle, SlaveAddr, I2C_MASTER_READ_BIT);
+
+
+	//procedure to read only 1 byte from slave, i think this will be used to receive data from slave
+	//on the data length the master will need from the slave
+	if(Len == 1)
+	{
+		//Disable Acking
+		pI2CHandle->pI2Cx->CR1 &= ~(1 << I2C_CR1_ACK);
+
+		//generate STOP condition
+		pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+
+		//clear the ADDR flag
+		dummy_read = pI2CHandle->pI2Cx->SR2;
+
+		//wait until  RXNE becomes 1
+		while(I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_RXNE) == 0);
+
+		//read data in to buffer
+		*pRxBuffer = pI2CHandle->pI2Cx->DR;
+
+		//re-enable ACKing
+		pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_ACK;
+
+		return;
+	}
+
+
+	//procedure to read data from slave when Len > 1
+	if(Len > 1)
+	{
+		//clear the ADDR flag
+		dummy_read = pI2CHandle->pI2Cx->SR2;
+
+		//read the data until Len becomes zero
+		for ( uint32_t i = Len ; i > 0 ; i--)
+		{
+			//wait until RXNE becomes 1
+			while(I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_RXNE) == 0);
+
+			if(i == 2) //if last 2 bytes are remaining
+			{
+				//Disable Acking
+				pI2CHandle->pI2Cx->CR1 &= ~(1 << I2C_CR1_ACK);
+
+				//generate STOP condition
+				pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+			}
+
+			//read the data from data register in to buffer
+			*pRxBuffer = pI2CHandle->pI2Cx->DR;
+
+			//increment the buffer address
+			pRxBuffer++;
+
+		}
+
+		//re-enable ACKing
+		pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_ACK;
+
+		return;
+	}
 }
 
 /*********************************************************************************************
@@ -419,6 +506,47 @@ uint8_t I2C_GetSR2FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName){
 	return flag_status;
 }
 
+
+/*********************************************************************************************
+ * @fn			- i2c_start_address_phase
+ *
+ * #brief		- helper function to generate START condition and send slave address.
+ *
+ * @param[in]	- I2C_Handle_t *pI2CHandle, pointer variable, input the address of the structure variable
+ * @param[in]	- uint8_t SlaveAddr, input the target slave address
+ * @param[in]	- uint8_t rw_bit, read/write bit, Read = 1 & write = 0.
+ *
+ * @return		- uint8_t, returns the flag status
+ *
+ * @Note 		-
+ */
+static void i2c_startphase_addressphase(I2C_Handle_t *pI2CHandle, uint8_t SlaveAddr, uint8_t rw_bit)
+{
+
+	//generate START condition
+	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_START;
+
+	//wait for SB flag to be set which means start bit executed successfully at the same tme read SR1
+	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_SB) == 0 );
+
+	//sets the r/nw bit to write mode
+	SlaveAddr = SlaveAddr << 1;
+
+	//master is in write mode
+	if(rw_bit == I2C_MASTER_WRITE_BIT)
+		SlaveAddr &= ~(1 << 0);
+
+	//master is in read mode
+	else
+		SlaveAddr |= 1 << 0;
+
+	//write the slave address to be sent thru which also clears the SB flag.
+	pI2CHandle->pI2Cx->DR |= SlaveAddr;
+
+	//waits for ADDR flag to be set which means address bit sent successfully at the same time reads SR1
+	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_ADDR) == 0 );
+
+}
 
 
 
