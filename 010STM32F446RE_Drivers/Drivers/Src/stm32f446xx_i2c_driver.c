@@ -267,11 +267,9 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_BTF) == 0);
 
 
-	//cleans data register for the next transmission
-	pI2CHandle->pI2Cx->DR &= ~(0xFF);
-
 	//generate the stop condition
 	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+
 }
 
 
@@ -311,25 +309,27 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 	//on the data length the master will need from the slave
 	if(Len == 1)
 	{
-		//Disable Acking
+		//Disable Acking so master will send a NACK after receiving 1 byte of data. The NACK is to tell slave it doesnt want anymore data
 		pI2CHandle->pI2Cx->CR1 &= ~(1 << I2C_CR1_ACK);
 
-		//generate STOP condition
-		pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
-
-		//clear the ADDR flag
+		//to clear the ADDR flag
 		dummy_read = pI2CHandle->pI2Cx->SR2;
 
 		//wait until  RXNE becomes 1
 		while(I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_RXNE) == 0);
 
+		//after NACK, master will generate a stop condition to end communication with slave
+		pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+
 		//read data in to buffer
 		*pRxBuffer = pI2CHandle->pI2Cx->DR;
 
-		//re-enable ACKing
-		pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_ACK;
+		if(pI2CHandle->I2C_Config.I2C_AckControl == I2C_ACK_ENABLE){
+			//re-enable ACKing
+			pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_ACK;
 
-		return;
+			return;
+		}
 	}
 
 
@@ -347,10 +347,10 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 
 			if(i == 2) //if last 2 bytes are remaining
 			{
-				//Disable Acking
+				//Disable Acking so master will send NACK when receiving the last byte of data. The NACK is to tell the slave it doesn't need any more data
 				pI2CHandle->pI2Cx->CR1 &= ~(1 << I2C_CR1_ACK);
 
-				//generate STOP condition
+				//after NACK, master will generate a stop condition to end communication with slave
 				pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
 			}
 
@@ -362,11 +362,17 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 
 		}
 
-		//re-enable ACKing
-		pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_ACK;
+		if(pI2CHandle->I2C_Config.I2C_AckControl == I2C_ACK_ENABLE){
+			//re-enable ACKing
+			pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_ACK;
 
-		return;
+			return;
+		}
+
 	}
+
+
+
 }
 
 /*********************************************************************************************
@@ -541,7 +547,7 @@ static void i2c_startphase_addressphase(I2C_Handle_t *pI2CHandle, uint8_t SlaveA
 		SlaveAddr |= 1 << 0;
 
 	//write the slave address to be sent thru which also clears the SB flag.
-	pI2CHandle->pI2Cx->DR |= SlaveAddr;
+	pI2CHandle->pI2Cx->DR = SlaveAddr;
 
 	//waits for ADDR flag to be set which means address bit sent successfully at the same time reads SR1
 	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_ADDR) == 0 );

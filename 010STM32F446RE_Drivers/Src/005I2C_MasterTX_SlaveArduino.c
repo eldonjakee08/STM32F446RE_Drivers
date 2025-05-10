@@ -43,7 +43,7 @@ void i2c_gpioinit(void){
 	I2CGpio_handle.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ALTFN;
 	I2CGpio_handle.GPIO_PinConfig.GPIO_PinAFMode = GPIO_AF4;
 	I2CGpio_handle.GPIO_PinConfig.GPIO_PinOType = GPIO_OPTYPE_OPENDRAIN;
-	I2CGpio_handle.GPIO_PinConfig.GPIO_PinPuPdCtrl = GPIO_NO_PULLUP_PULLDOWN;
+	I2CGpio_handle.GPIO_PinConfig.GPIO_PinPuPdCtrl = GPIO_PULLUP_EN;
 	I2CGpio_handle.GPIO_PinConfig.GPIO_PinSpeed = GPIO_FAST_SPD;
 
 	I2CGpio_handle.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN6;
