@@ -960,10 +960,7 @@ static void I2C_MasterRxNEInterrupt_Handler(I2C_Handle_t *pI2CHandle){
 
 		//decrement Rxlen since 1 byte has been received
 		(pI2CHandle->RxLen)--;
-<<<<<<< HEAD
-=======
 
->>>>>>> i2c_driver
 	}
 
 	//if multiple bytes need to be received execute this

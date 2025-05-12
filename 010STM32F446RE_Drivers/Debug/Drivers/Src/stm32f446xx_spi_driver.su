@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 ../Drivers/Src/stm32f446xx_spi_driver.c:31:6:SPI_PeripheralClkCtrl	24	static
 ../Drivers/Src/stm32f446xx_spi_driver.c:92:6:SPI_Init	24	static
 ../Drivers/Src/stm32f446xx_spi_driver.c:152:6:SPI_DeInit	24	static
@@ -20,4 +18,3 @@
 ../Drivers/Src/stm32f446xx_spi_driver.c:683:6:SPI_CloseTransmission	16	static
 ../Drivers/Src/stm32f446xx_spi_driver.c:699:6:SPI_CloseReception	16	static
 ../Drivers/Src/stm32f446xx_spi_driver.c:717:13:SPI_ApplicationEventCallback	16	static
->>>>>>> i2c_driver
