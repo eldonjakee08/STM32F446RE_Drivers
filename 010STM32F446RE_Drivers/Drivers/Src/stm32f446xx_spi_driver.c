@@ -184,7 +184,7 @@ void SPI_DeInit(SPI_RegDef_t *pSPIx)
  *
  * @Note 		-
  */
-void SPI_Periperal_EnDi(SPI_RegDef_t *pSPIx, uint8_t EnorDi)
+void SPI_PeriperalCtrl(SPI_RegDef_t *pSPIx, uint8_t EnorDi)
 {
 	if (EnorDi == ENABLE) {
 		pSPIx->CR1 |= (1 << SPI_CR1_SPE);

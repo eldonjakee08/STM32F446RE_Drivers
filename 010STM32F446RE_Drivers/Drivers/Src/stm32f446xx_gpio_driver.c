@@ -190,21 +190,20 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 	pGPIOHandle->pGPIOx->PUPDR |= temp; //sets the bit fields
 	temp = 0;
 
-	//3. Configure output type & output speed(if set only at output mode)
-	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_OUTPUT){
+	//3. Configure output type & output speed
 
-		//Only executes if user wants to set GPIO as output mode because no pushpull or open drain config for GPIO input mode
-		temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOType << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber) );
-		pGPIOHandle->pGPIOx->OTYPER &= ~(1 << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber) ); //clears the bit fields
-		pGPIOHandle->pGPIOx->OTYPER |= temp; //sets the bit fields
-		temp = 0;
+	//Only executes if user wants to set GPIO as output mode because no pushpull or open drain config for GPIO input mode
+	temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOType << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber) );
+	pGPIOHandle->pGPIOx->OTYPER &= ~(1 << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber) ); //clears the bit fields
+	pGPIOHandle->pGPIOx->OTYPER |= temp; //sets the bit fields
+	temp = 0;
 
-		//sets GPIO output speed
-		temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)) );
-		pGPIOHandle->pGPIOx->OSPEEDER &= ~(3 << (2 * (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)) ); //clears the bit fields
-		pGPIOHandle->pGPIOx->OSPEEDER |= temp; //sets the bit fields
-		temp = 0;
-	}
+	//sets GPIO output speed
+	temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)) );
+	pGPIOHandle->pGPIOx->OSPEEDER &= ~(3 << (2 * (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)) ); //clears the bit fields
+	pGPIOHandle->pGPIOx->OSPEEDER |= temp; //sets the bit fields
+	temp = 0;
+
 
 	//4. Configure alternate function setting (if GPIO is set at alternate function mode)
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_ALTFN){
