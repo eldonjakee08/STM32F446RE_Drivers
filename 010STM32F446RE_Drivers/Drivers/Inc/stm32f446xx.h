@@ -515,6 +515,14 @@ typedef struct
 #define IRQ_NUMBER_SPI3			51
 #define IRQ_NUMBER_SPI4			84
 
+#define IRQ_NUMBER_I2C1_EVENT	31
+#define IRQ_NUMBER_I2C1_ERR		32
+#define IRQ_NUMBER_I2C2_EVENT	40
+#define IRQ_NUMBER_I2C2_ERR		41
+#define IRQ_NUMBER_I2C3_EVENT	72
+#define IRQ_NUMBER_I2C3_ERR		73
+
+
 /*
  * @BIT_FIELDS_SPI_PERIPH
  * Bit fields position of SPI Peripherals

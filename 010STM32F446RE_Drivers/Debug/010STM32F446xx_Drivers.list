@@ -21,31 +21,31 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   8 .data         0000005c  20000000  08002840  00004000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          00000178  2000005c  0800289c  0000405c  2**2
+  9 .bss          00000194  2000005c  0800289c  0000405c  2**2
                   ALLOC
- 10 ._user_heap_stack 00000604  200001d4  0800289c  000041d4  2**0
+ 10 ._user_heap_stack 00000600  200001f0  0800289c  000041f0  2**0
                   ALLOC
  11 .ARM.attributes 0000002a  00000000  00000000  0000405c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00001d76  00000000  00000000  00004086  2**0
+ 12 .debug_info   00002149  00000000  00000000  00004086  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 0000081c  00000000  00000000  00005dfc  2**0
+ 13 .debug_abbrev 00000870  00000000  00000000  000061cf  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000228  00000000  00000000  00006618  2**3
+ 14 .debug_aranges 00000278  00000000  00000000  00006a40  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 0000018c  00000000  00000000  00006840  2**0
+ 15 .debug_rnglists 000001cd  00000000  00000000  00006cb8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00003733  00000000  00000000  000069cc  2**0
+ 16 .debug_macro  0000379f  00000000  00000000  00006e85  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00002b09  00000000  00000000  0000a0ff  2**0
+ 17 .debug_line   00002fac  00000000  00000000  0000a624  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0000c7f5  00000000  00000000  0000cc08  2**0
+ 18 .debug_str    0000ca7a  00000000  00000000  0000d5d0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000193fd  2**0
+ 19 .comment      00000043  00000000  00000000  0001a04a  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000010d4  00000000  00000000  00019440  2**2
+ 20 .debug_frame  0000125c  00000000  00000000  0001a090  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000072  00000000  00000000  0001a514  2**0
+ 21 .debug_line_str 00000072  00000000  00000000  0001b2ec  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -2027,9 +2027,9 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
  8001178:	00061a80 	.word	0x00061a80
 
 0800117c <I2C_MasterSendData>:
+ * @return		- none
  *
- * @Note 		- I'm thinking of sectioning this into individual "helper" functions
- * 	            - like one for generating START condition, one for sending data, etc. but haven't decided yet
+ * @Note 		-
  */
 void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN)
 {
@@ -2045,9 +2045,9 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
  800118c:	82fb      	strh	r3, [r7, #22]
 
 	//start phase and address phase start
-	i2c_startphase_addressphase(pI2CHandle, SlaveAddr, I2C_MASTER_WRITE_BIT);
+	i2c_startphase_addressphase(pI2CHandle, SlaveAddr, I2C_MASTER_WRITE);
  800118e:	78fb      	ldrb	r3, [r7, #3]
- 8001190:	2200      	movs	r2, #0
+ 8001190:	2202      	movs	r2, #2
  8001192:	4619      	mov	r1, r3
  8001194:	68f8      	ldr	r0, [r7, #12]
  8001196:	f000 f98c 	bl	80014b2 <i2c_startphase_addressphase>
@@ -2140,9 +2140,9 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
  8001216:	bd80      	pop	{r7, pc}
 
 08001218 <I2C_MasterReceiveData>:
+ * @return		- none
  *
- * @Note 		- I'm thinking of sectioning this into individual "helper" functions
- * 	            - like one for generating START condition, one for sending data, etc. but haven't decided yet
+ * @Note 		-
  */
 void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN)
 {
@@ -2161,7 +2161,7 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 
 	//4. wait until address phase is completed by checking the ADDR flag in the SR1
 	//summed up in this one helper function i made
-	i2c_startphase_addressphase(pI2CHandle, SlaveAddr, I2C_MASTER_READ_BIT);
+	i2c_startphase_addressphase(pI2CHandle, SlaveAddr, I2C_MASTER_READ);
  800122a:	78fb      	ldrb	r3, [r7, #3]
  800122c:	2201      	movs	r2, #1
  800122e:	4619      	mov	r1, r3
@@ -2649,9 +2649,9 @@ static void i2c_startphase_addressphase(I2C_Handle_t *pI2CHandle, uint8_t SlaveA
  80014ea:	70fb      	strb	r3, [r7, #3]
 
 	//master is in write mode
-	if(rw_bit == I2C_MASTER_WRITE_BIT)
+	if(rw_bit == I2C_MASTER_WRITE)
  80014ec:	78bb      	ldrb	r3, [r7, #2]
- 80014ee:	2b00      	cmp	r3, #0
+ 80014ee:	2b02      	cmp	r3, #2
  80014f0:	d104      	bne.n	80014fc <i2c_startphase_addressphase+0x4a>
 		SlaveAddr &= ~(1 << 0);
  80014f2:	78fb      	ldrb	r3, [r7, #3]
@@ -3340,8 +3340,8 @@ void *_sbrk(ptrdiff_t incr)
  80018a6:	bd80      	pop	{r7, pc}
  80018a8:	20020000 	.word	0x20020000
  80018ac:	00000400 	.word	0x00000400
- 80018b0:	20000084 	.word	0x20000084
- 80018b4:	200001d8 	.word	0x200001d8
+ 80018b0:	200000a0 	.word	0x200000a0
+ 80018b4:	200001f0 	.word	0x200001f0
 
 080018b8 <Reset_Handler>:
 
@@ -3438,7 +3438,7 @@ LoopForever:
   ldr r2, =_sbss
  8001900:	2000005c 	.word	0x2000005c
   ldr r4, =_ebss
- 8001904:	200001d4 	.word	0x200001d4
+ 8001904:	200001f0 	.word	0x200001f0
 
 08001908 <ADC_IRQHandler>:
  * @retval : None
@@ -3492,7 +3492,7 @@ Infinite_Loop:
  8001968:	08001ae7 	.word	0x08001ae7
  800196c:	08001b1f 	.word	0x08001b1f
  8001970:	08001b43 	.word	0x08001b43
- 8001974:	20000088 	.word	0x20000088
+ 8001974:	200000a4 	.word	0x200000a4
 
 08001978 <stdio_exit_handler>:
  8001978:	4a02      	ldr	r2, [pc, #8]	@ (8001984 <stdio_exit_handler+0xc>)
@@ -3527,9 +3527,9 @@ Infinite_Loop:
  80019bc:	f000 bd86 	b.w	80024cc <_fflush_r>
  80019c0:	bd10      	pop	{r4, pc}
  80019c2:	bf00      	nop
- 80019c4:	20000088 	.word	0x20000088
- 80019c8:	200000f0 	.word	0x200000f0
- 80019cc:	20000158 	.word	0x20000158
+ 80019c4:	200000a4 	.word	0x200000a4
+ 80019c8:	2000010c 	.word	0x2000010c
+ 80019cc:	20000174 	.word	0x20000174
 
 080019d0 <global_stdio_init.part.0>:
  80019d0:	b510      	push	{r4, lr}
@@ -3550,21 +3550,21 @@ Infinite_Loop:
  80019f6:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
  80019fa:	2112      	movs	r1, #18
  80019fc:	f7ff bf86 	b.w	800190c <std>
- 8001a00:	200001c0 	.word	0x200001c0
- 8001a04:	20000088 	.word	0x20000088
+ 8001a00:	200001dc 	.word	0x200001dc
+ 8001a04:	200000a4 	.word	0x200000a4
  8001a08:	08001979 	.word	0x08001979
 
 08001a0c <__sfp_lock_acquire>:
  8001a0c:	4801      	ldr	r0, [pc, #4]	@ (8001a14 <__sfp_lock_acquire+0x8>)
  8001a0e:	f000 b916 	b.w	8001c3e <__retarget_lock_acquire_recursive>
  8001a12:	bf00      	nop
- 8001a14:	200001c9 	.word	0x200001c9
+ 8001a14:	200001e5 	.word	0x200001e5
 
 08001a18 <__sfp_lock_release>:
  8001a18:	4801      	ldr	r0, [pc, #4]	@ (8001a20 <__sfp_lock_release+0x8>)
  8001a1a:	f000 b911 	b.w	8001c40 <__retarget_lock_release_recursive>
  8001a1e:	bf00      	nop
- 8001a20:	200001c9 	.word	0x200001c9
+ 8001a20:	200001e5 	.word	0x200001e5
 
 08001a24 <__sinit>:
  8001a24:	b510      	push	{r4, lr}
@@ -3584,7 +3584,7 @@ Infinite_Loop:
  8001a48:	e7f2      	b.n	8001a30 <__sinit+0xc>
  8001a4a:	bf00      	nop
  8001a4c:	08001991 	.word	0x08001991
- 8001a50:	200001c0 	.word	0x200001c0
+ 8001a50:	200001dc 	.word	0x200001dc
 
 08001a54 <_fwalk_sglue>:
  8001a54:	e92d 43f8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
@@ -3720,7 +3720,7 @@ Infinite_Loop:
  8001b72:	b103      	cbz	r3, 8001b76 <_close_r+0x1a>
  8001b74:	6023      	str	r3, [r4, #0]
  8001b76:	bd38      	pop	{r3, r4, r5, pc}
- 8001b78:	200001c4 	.word	0x200001c4
+ 8001b78:	200001e0 	.word	0x200001e0
 
 08001b7c <_lseek_r>:
  8001b7c:	b538      	push	{r3, r4, r5, lr}
@@ -3738,7 +3738,7 @@ Infinite_Loop:
  8001b96:	b103      	cbz	r3, 8001b9a <_lseek_r+0x1e>
  8001b98:	6023      	str	r3, [r4, #0]
  8001b9a:	bd38      	pop	{r3, r4, r5, pc}
- 8001b9c:	200001c4 	.word	0x200001c4
+ 8001b9c:	200001e0 	.word	0x200001e0
 
 08001ba0 <_read_r>:
  8001ba0:	b538      	push	{r3, r4, r5, lr}
@@ -3756,7 +3756,7 @@ Infinite_Loop:
  8001bba:	b103      	cbz	r3, 8001bbe <_read_r+0x1e>
  8001bbc:	6023      	str	r3, [r4, #0]
  8001bbe:	bd38      	pop	{r3, r4, r5, pc}
- 8001bc0:	200001c4 	.word	0x200001c4
+ 8001bc0:	200001e0 	.word	0x200001e0
 
 08001bc4 <_write_r>:
  8001bc4:	b538      	push	{r3, r4, r5, lr}
@@ -3774,7 +3774,7 @@ Infinite_Loop:
  8001bde:	b103      	cbz	r3, 8001be2 <_write_r+0x1e>
  8001be0:	6023      	str	r3, [r4, #0]
  8001be2:	bd38      	pop	{r3, r4, r5, pc}
- 8001be4:	200001c4 	.word	0x200001c4
+ 8001be4:	200001e0 	.word	0x200001e0
 
 08001be8 <__errno>:
  8001be8:	4b01      	ldr	r3, [pc, #4]	@ (8001bf0 <__errno+0x8>)
@@ -3893,7 +3893,7 @@ Infinite_Loop:
  8001cce:	e7ca      	b.n	8001c66 <_free_r+0x22>
  8001cd0:	bd38      	pop	{r3, r4, r5, pc}
  8001cd2:	bf00      	nop
- 8001cd4:	200001d0 	.word	0x200001d0
+ 8001cd4:	200001ec 	.word	0x200001ec
 
 08001cd8 <sbrk_aligned>:
  8001cd8:	b570      	push	{r4, r5, r6, lr}
@@ -3923,7 +3923,7 @@ Infinite_Loop:
  8001d12:	d1f2      	bne.n	8001cfa <sbrk_aligned+0x22>
  8001d14:	e7ef      	b.n	8001cf6 <sbrk_aligned+0x1e>
  8001d16:	bf00      	nop
- 8001d18:	200001cc 	.word	0x200001cc
+ 8001d18:	200001e8 	.word	0x200001e8
 
 08001d1c <_malloc_r>:
  8001d1c:	e92d 43f8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
@@ -4033,19 +4033,19 @@ Infinite_Loop:
  8001e12:	6005      	str	r5, [r0, #0]
  8001e14:	e7d6      	b.n	8001dc4 <_malloc_r+0xa8>
  8001e16:	bf00      	nop
- 8001e18:	200001d0 	.word	0x200001d0
+ 8001e18:	200001ec 	.word	0x200001ec
 
 08001e1c <__malloc_lock>:
  8001e1c:	4801      	ldr	r0, [pc, #4]	@ (8001e24 <__malloc_lock+0x8>)
  8001e1e:	f7ff bf0e 	b.w	8001c3e <__retarget_lock_acquire_recursive>
  8001e22:	bf00      	nop
- 8001e24:	200001c8 	.word	0x200001c8
+ 8001e24:	200001e4 	.word	0x200001e4
 
 08001e28 <__malloc_unlock>:
  8001e28:	4801      	ldr	r0, [pc, #4]	@ (8001e30 <__malloc_unlock+0x8>)
  8001e2a:	f7ff bf09 	b.w	8001c40 <__retarget_lock_release_recursive>
  8001e2e:	bf00      	nop
- 8001e30:	200001c8 	.word	0x200001c8
+ 8001e30:	200001e4 	.word	0x200001e4
 
 08001e34 <__sfputc_r>:
  8001e34:	6893      	ldr	r3, [r2, #8]
@@ -5000,7 +5000,7 @@ Infinite_Loop:
  80026c2:	b103      	cbz	r3, 80026c6 <_sbrk_r+0x1a>
  80026c4:	6023      	str	r3, [r4, #0]
  80026c6:	bd38      	pop	{r3, r4, r5, pc}
- 80026c8:	200001c4 	.word	0x200001c4
+ 80026c8:	200001e0 	.word	0x200001e0
 
 080026cc <__swhatbuf_r>:
  80026cc:	b570      	push	{r4, r5, r6, lr}
@@ -5100,7 +5100,7 @@ Infinite_Loop:
  80027aa:	6023      	str	r3, [r4, #0]
  80027ac:	bd38      	pop	{r3, r4, r5, pc}
  80027ae:	bf00      	nop
- 80027b0:	200001c4 	.word	0x200001c4
+ 80027b0:	200001e0 	.word	0x200001e0
 
 080027b4 <_isatty_r>:
  80027b4:	b538      	push	{r3, r4, r5, lr}
@@ -5116,7 +5116,7 @@ Infinite_Loop:
  80027ca:	b103      	cbz	r3, 80027ce <_isatty_r+0x1a>
  80027cc:	6023      	str	r3, [r4, #0]
  80027ce:	bd38      	pop	{r3, r4, r5, pc}
- 80027d0:	200001c4 	.word	0x200001c4
+ 80027d0:	200001e0 	.word	0x200001e0
 
 080027d4 <_init>:
  80027d4:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
