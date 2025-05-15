@@ -989,11 +989,11 @@ static void I2C_MasterRxNEInterrupt_Handler(I2C_Handle_t *pI2CHandle){
 			pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
 
 		//close the I2c Rx
-		I2C_CloseReceiveData(pI2CHandle); // to be implemented
+		I2C_CloseReceiveData(pI2CHandle);
 
 
 		//Notify Application
-		I2C_ApplicationEventCallback(pI2CHandle, I2C_EV_RX_CMPLT); //to be implemented
+		I2C_ApplicationEventCallback(pI2CHandle, I2C_EV_RX_CMPLT);
 	}
 
 
