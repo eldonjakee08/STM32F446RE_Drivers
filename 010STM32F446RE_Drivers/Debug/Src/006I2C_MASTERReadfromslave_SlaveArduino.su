@@ -1,6 +1,0 @@
-../Src/006I2C_MASTERReadfromslave_SlaveArduino.c:13:6:delay	16	static
-../Src/006I2C_MASTERReadfromslave_SlaveArduino.c:21:6:gpio_init	24	static
-../Src/006I2C_MASTERReadfromslave_SlaveArduino.c:36:6:i2c_gpioinit	24	static
-../Src/006I2C_MASTERReadfromslave_SlaveArduino.c:55:6:i2c_init	8	static
-../Src/006I2C_MASTERReadfromslave_SlaveArduino.c:66:5:main	8	static
-../Src/006I2C_MASTERReadfromslave_SlaveArduino.c:97:6:EXTI15_10_IRQHandler	56	dynamic

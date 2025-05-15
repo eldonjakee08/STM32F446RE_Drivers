@@ -127,7 +127,7 @@ uint8_t I2C_GetSR2FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName);
 void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi); //DONE
 uint32_t RCC_GetPCLK1Value(void);
 uint8_t Get_TriseValue(I2C_Handle_t *pI2CHandle);
-
+__weak void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle, uint8_t event);
 
 
 /*

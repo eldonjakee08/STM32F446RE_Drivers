@@ -5,17 +5,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Src/006I2C_MASTERReadfromslave_SlaveArduino.c \
+../Src/007MasterSendtoSlave_I2C_interrupt.c \
 ../Src/syscalls.c \
 ../Src/sysmem.c 
 
 OBJS += \
-./Src/006I2C_MASTERReadfromslave_SlaveArduino.o \
+./Src/007MasterSendtoSlave_I2C_interrupt.o \
 ./Src/syscalls.o \
 ./Src/sysmem.o 
 
 C_DEPS += \
-./Src/006I2C_MASTERReadfromslave_SlaveArduino.d \
+./Src/007MasterSendtoSlave_I2C_interrupt.d \
 ./Src/syscalls.d \
 ./Src/sysmem.d 
 
@@ -27,7 +27,7 @@ Src/%.o Src/%.su Src/%.cyclo: ../Src/%.c Src/subdir.mk
 clean: clean-Src
 
 clean-Src:
-	-$(RM) ./Src/006I2C_MASTERReadfromslave_SlaveArduino.cyclo ./Src/006I2C_MASTERReadfromslave_SlaveArduino.d ./Src/006I2C_MASTERReadfromslave_SlaveArduino.o ./Src/006I2C_MASTERReadfromslave_SlaveArduino.su ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+	-$(RM) ./Src/007MasterSendtoSlave_I2C_interrupt.cyclo ./Src/007MasterSendtoSlave_I2C_interrupt.d ./Src/007MasterSendtoSlave_I2C_interrupt.o ./Src/007MasterSendtoSlave_I2C_interrupt.su ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
 
 .PHONY: clean-Src
 
