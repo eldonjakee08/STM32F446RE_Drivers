@@ -10,7 +10,7 @@
 #include "stm32f446xx.h"
 
 
-static void i2c_startphase_addressphase(I2C_Handle_t *pI2CHandle, uint8_t SlaveAddr, uint8_t rw_bit);
+static void i2c_startphase_addressphase(I2C_RegDef_t *pI2Cx, uint8_t SlaveAddr, uint8_t rw_bit);
 static void I2C_MasterRxNEInterrupt_Handler(I2C_Handle_t *pI2CHandle);
 static void I2C_CloseReceiveData(I2C_Handle_t *pI2CHandle);
 static void I2C_CloseSendData(I2C_Handle_t *pI2CHandle);
@@ -143,7 +143,7 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 
 	uint32_t SCLSpeed = pI2CHandle->I2C_Config.I2C_SCLSpeed;
 	uint16_t CCRVal;
-	uint8_t temp = 0;
+	uint16_t temp = 0;
 
 	//fetches the current APB1 clock value
 	uint32_t APB1Clock = RCC_GetPCLK1Value();
@@ -199,12 +199,12 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 			pI2CHandle->pI2Cx->CCR = temp;
 			break;
 
-		case I2C_SCL_SPEED_FAST4k:
+		case I2C_SCL_SPEED_FAST4K:
 			//calculates the needed CCR value
 			CCRVal = APB1Clock / (25 * SCLSpeed);
 
 			//set the CCR value
-			//temp |= CCRVal << I2C_CCR_CCR11_0;
+			temp |= CCRVal << I2C_CCR_CCR11_0;
 
 			//programs the temp value into the CCR register
 			pI2CHandle->pI2Cx->CCR = temp;
@@ -244,7 +244,7 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 	uint16_t dummy_read __unused =0;
 
 	//start phase and address phase start
-	i2c_startphase_addressphase(pI2CHandle, SlaveAddr, I2C_MASTER_WRITE);
+	i2c_startphase_addressphase(pI2CHandle->pI2Cx, SlaveAddr, I2C_MASTER_WRITE);
 
 	//dummy read from SR2 to clear the ADDR flag.
 	dummy_read = pI2CHandle->pI2Cx->SR2;
@@ -253,7 +253,7 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 	while(Len > 0){
 
 		//check if shift register TX buffer is empty, if empty write the data into data register to be sent
-		if( ((pI2CHandle->pI2Cx->SR1 >> I2C_SR1_TXE) & 0x1) == 1){
+		if( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_TXE) == 1 ){
 
 			pI2CHandle->pI2Cx->DR = *pTxBuffer;
 
@@ -273,6 +273,85 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 		pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
 
 }
+
+
+/*********************************************************************************************
+ * @fn			- I2C_MasterSendDataOLED
+ *
+ * #brief		- Send data thru I2C peripheral in master mode, this function is specifically built for driving the SSD1306 and ssd1315 OLED drivers
+ * 				- take note of the 1st write into data register of I2C, this represents the control byte (0x00) of the communication
+ *
+ * @param[in]	- I2C_RegDef_t *pI2Cx, I2C peripheral instance.
+  * @param[in]	- uint8_t ctrlByte, control byte to be send to OLED, 0X00 command stream byte, 0x40 data stream byte
+ * @param[in]	- uint8_t *pTxBuffer, pointer variable, input the address of the data to be sent
+ * @param[in]	- uint32_t Len, input the length of the data to be sent
+ * @param[in]	- uint8_t SlaveAddr, input the slave address that will receive the data
+ *
+ * @return		- none
+ *
+ * @Note 		-
+ */
+void I2C_MasterSendDataOLED(I2C_RegDef_t *pI2Cx, uint8_t ctrlByte, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN)
+{
+	uint16_t dummy_read __unused =0;
+
+	//start phase and address phase start
+	i2c_startphase_addressphase(pI2Cx, SlaveAddr, I2C_MASTER_WRITE);
+
+	//dummy read from SR2 to clear the ADDR flag.
+	dummy_read = pI2Cx->SR2;
+
+	//write the control byte to be sent to OLED
+	pI2Cx->DR = ctrlByte;
+
+	//start sending to OLED the commandByte(if sending for command) or the displayBuffer (if updating the screen)
+	while(Len > 0){
+
+		//check if shift register TX buffer is empty, if empty write the data into data register to be sent
+		if( I2C_GetSR1FlagStatus(pI2Cx, I2C_SR1_TXE) == 1 ){
+
+			pI2Cx->DR = *pTxBuffer;
+
+			//decrements data length and increment pointer address to next byte is to be sent .
+			Len--;
+			pTxBuffer++;
+		}
+	}
+
+	//wait for TXE = 1 & BTF = 1 which means data register and shift register is empty
+	while( I2C_GetSR1FlagStatus(pI2Cx, I2C_SR1_TXE) == 0);
+	while( I2C_GetSR1FlagStatus(pI2Cx, I2C_SR1_BTF) == 0);
+
+
+	if(Repeated_Start_EN == I2C_REPEATED_START_DI)
+		//generate the stop condition
+		pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+
+}
+
+/*********************************************************************************************
+ * @fn			- I2C_MasterSendData
+ *
+ * #brief		- Sends a single byte thru I2C. Note: i2c peripheral must be done with address phase in order to successfully execute this function
+ *
+ * @param[in]	- I2C_RegDef_t *pI2Cx, i2c1 peripheral base address, instance.
+ * @param[in]	- uint8_t data, data to be sent
+ *
+ * @return		-
+ *
+ * @Note 		-
+ */
+void I2C_WriteDataRegister(I2C_RegDef_t *pI2Cx, uint8_t data){
+	pI2Cx->DR = data;
+}
+
+
+//Generates stop condition in SDA line
+void I2C_GenerateStopCondition(I2C_RegDef_t *pI2Cx){
+	pI2Cx->CR1 |= 1 << I2C_CR1_STOP;
+}
+
+
 
 
 /*********************************************************************************************
@@ -323,7 +402,7 @@ uint8_t I2C_MasterSendDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint3
  *
  * #brief		- Receive data from an i2c slave
  *
- * @param[in]	- I2C_Handle_t *pI2CHandle, pointer variable, input the address of the structure variable
+ * @param[in]	- I2C_Handle_t *pI2CHandle, I2C instance.
  * @param[in]	- uint8_t *pTxBuffer, pointer variable, input the address of the data to be sent
  * @param[in]	- uint32_t Len, input the length of the data to be sent
  * @param[in]	- uint8_t SlaveAddr, input the slave address that will receive the data
@@ -345,7 +424,7 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 
 	//4. wait until address phase is completed by checking the ADDR flag in the SR1
 	//summed up in this one helper function i made
-	i2c_startphase_addressphase(pI2CHandle, SlaveAddr, I2C_MASTER_READ);
+	i2c_startphase_addressphase(pI2CHandle->pI2Cx, SlaveAddr, I2C_MASTER_READ);
 
 
 	//procedure to read only 1 byte from slave, i think this will be used to receive data from slave
@@ -616,14 +695,14 @@ uint8_t I2C_GetSR2FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName){
  *
  * @Note 		-
  */
-static void i2c_startphase_addressphase(I2C_Handle_t *pI2CHandle, uint8_t SlaveAddr, uint8_t rw_bit)
+static void i2c_startphase_addressphase(I2C_RegDef_t *pI2Cx, uint8_t SlaveAddr, uint8_t rw_bit)
 {
 
 	//generate START condition
-	pI2CHandle->pI2Cx->CR1 |= 1 << I2C_CR1_START;
+	pI2Cx->CR1 |= 1 << I2C_CR1_START;
 
 	//wait for SB flag to be set which means start bit executed successfully at the same tme read SR1
-	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_SB) == 0 );
+	while( I2C_GetSR1FlagStatus(pI2Cx, I2C_SR1_SB) == 0 );
 
 	//sets the r/nw bit to write mode
 	SlaveAddr = SlaveAddr << 1;
@@ -637,10 +716,10 @@ static void i2c_startphase_addressphase(I2C_Handle_t *pI2CHandle, uint8_t SlaveA
 		SlaveAddr |= 1 << 0;
 
 	//write the slave address to be sent thru which also clears the SB flag.
-	pI2CHandle->pI2Cx->DR = SlaveAddr;
+	pI2Cx->DR = SlaveAddr;
 
 	//waits for ADDR flag to be set which means address bit sent successfully at the same time reads SR1
-	while( I2C_GetSR1FlagStatus(pI2CHandle->pI2Cx, I2C_SR1_ADDR) == 0 );
+	while( I2C_GetSR1FlagStatus(pI2Cx, I2C_SR1_ADDR) == 0 );
 
 }
 
@@ -833,6 +912,11 @@ void I2C_Event_IRQHandling(I2C_Handle_t *pI2CHandle)
 			//increment TxBuffer address
 			pI2CHandle->pTxBuffer++;
 		}
+		//device is in slave mode
+		//data transmission will be handled by application in slave mode
+		else{
+			I2C_ApplicationEventCallback(pI2CHandle, I2C_EV_DATA_REQ);
+		}
 	}
 
 
@@ -846,6 +930,11 @@ void I2C_Event_IRQHandling(I2C_Handle_t *pI2CHandle)
 		{
 
 			I2C_MasterRxNEInterrupt_Handler(pI2CHandle);
+		}
+		//device is in slave mode
+		//data reception will be handled by application in slave mode
+		else{
+			I2C_ApplicationEventCallback(pI2CHandle, I2C_EV_DATA_RECV);
 		}
 	}
 
@@ -866,7 +955,7 @@ void I2C_Event_IRQHandling(I2C_Handle_t *pI2CHandle)
 
  */
 
-void I2C_ER_IRQHandling(I2C_Handle_t *pI2CHandle)
+void I2C_Err_IRQHandling(I2C_Handle_t *pI2CHandle)
 {
 
 	uint32_t temp1,temp2;
@@ -1032,38 +1121,55 @@ static void I2C_CloseSendData(I2C_Handle_t *pI2CHandle){
 }
 
 
-
-
-
-
-
-__weak void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle, uint8_t event)
+void I2C_SlaveSendData(I2C_RegDef_t *pI2Cx, uint8_t data)
 {
+	//wait until TXE becomes 1
+	while (I2C_GetSR1FlagStatus(pI2Cx, I2C_SR1_TXE) == 0);
 
+	//write the data to the data register
+	pI2Cx->DR = data;
+}
+
+
+/*
+ *
+ */
+uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2Cx)
+{
+	//wait until RXNE becomes 1
+	while (I2C_GetSR1FlagStatus(pI2Cx, I2C_SR1_RXNE) == 0);
+
+	//return the data from data register
+	return (uint8_t) pI2Cx->DR;
+}
+
+
+/*
+ * This function enables the i2c event interrupt, buffer interrupt & error interrupt control bits in CR2.
+ * only for slave mode
+ */
+void I2C_SlaveEn_CallbackEvents(I2C_RegDef_t *pI2Cx, uint8_t EnorDi)
+{
+	if(EnorDi == ENABLE){
+
+		//enable interrupts
+		pI2Cx->CR2 |= 1 << I2C_CR2_ITERREN;
+		pI2Cx->CR2 |= 1 << I2C_CR2_ITEVTEN;
+		pI2Cx->CR2 |= 1 << I2C_CR2_ITBUFEN;
+	}else{
+
+		//disable interrupts
+		pI2Cx->CR2 &= ~(1 << I2C_CR2_ITERREN);
+		pI2Cx->CR2 &= ~(1 << I2C_CR2_ITEVTEN);
+		pI2Cx->CR2 &= ~(1 << I2C_CR2_ITBUFEN);
+	}
 }
 
 
 
 
 
+__weak void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle, uint8_t AppEvent)
+{
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}

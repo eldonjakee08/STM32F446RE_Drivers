@@ -10,8 +10,6 @@
 #include <string.h>
 #include <stdio.h>
 
-//void I2C_ApplicationEventCallBack(I2C_Handle_t *pI2CHandle, uint8_t event);
-
 
 void delay(void){
 
@@ -45,7 +43,7 @@ void gpio_init(void){
 void i2c_gpioinit(void){
 	GPIO_Handle_t I2CGpio_handle;
 
-	//initialize PC6 I2C SCL
+	//initialize PB6 I2C SCL
 	I2CGpio_handle.pGPIOx = GPIOB;
 	I2CGpio_handle.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ALTFN;
 	I2CGpio_handle.GPIO_PinConfig.GPIO_PinAFMode = GPIO_AF4;
@@ -56,7 +54,7 @@ void i2c_gpioinit(void){
 	I2CGpio_handle.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN6;
 	GPIO_Init(&I2CGpio_handle);
 
-	//initialize PC7 I2C SDA
+	//initialize PB7 I2C SDA
 	I2CGpio_handle.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN7;
 	GPIO_Init(&I2CGpio_handle);
 }
@@ -90,6 +88,8 @@ int main(void){
 
 	I2C_IRQInterruptConfig(IRQ_NUMBER_I2C1_EVENT, ENABLE);
 
+	I2C_IRQInterruptConfig(IRQ_NUMBER_I2C1_ERR, ENABLE);
+
 	I2C_PeripheralControl(I2C1, ENABLE);
 
 
@@ -115,16 +115,16 @@ void EXTI15_10_IRQHandler(){
 	I2C_MasterSendDataIT(&I2C_handle, &cmd1, 1, 0x68, I2C_REPEATED_START_EN);
 
 	//receive data length from slave
-	while(I2C_MasterReceiveDataIT(&I2C_handle, &len, 1, 0x68, I2C_REPEATED_START_EN) != 0);
+	while(I2C_MasterReceiveDataIT(&I2C_handle, &len, 1, 0x68, I2C_REPEATED_START_EN) != I2C_READY);
 
 
 	//send command to retrieve the whole length of data from slave
-	while(I2C_MasterSendDataIT(&I2C_handle, &cmd2, 1, 0x68, I2C_REPEATED_START_EN) != 0);
+	while(I2C_MasterSendDataIT(&I2C_handle, &cmd2, 1, 0x68, I2C_REPEATED_START_EN) != I2C_READY);
 
 	//rxBuffer[len];
 
 	//receive whole data from slave
-	while(I2C_MasterReceiveDataIT(&I2C_handle, rxBuffer, len, 0x68, I2C_REPEATED_START_DI) != 0);
+	while(I2C_MasterReceiveDataIT(&I2C_handle, rxBuffer, len, 0x68, I2C_REPEATED_START_DI) != I2C_READY);
 
 	printf("\nReceived Data: ");
 	for(uint32_t i=0; i<len; i++){
@@ -142,7 +142,49 @@ void EXTI15_10_IRQHandler(){
 void I2C1_EV_IRQHandler(){
 
 	I2C_Event_IRQHandling(&I2C_handle);
+}
 
+
+
+
+void I2C1_ER_IRQHandler(){
+
+	I2C_Err_IRQHandling(&I2C_handle);
+}
+
+
+void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle, uint8_t event)
+{
+	switch(event)
+	{
+	case I2C_EV_TX_CMPLT:
+		printf("Data Transmission Completed\n");
+		break;
+	case I2C_EV_RX_CMPLT:
+		printf("Data Reception Completed\n");
+		break;
+	case I2C_EV_STOP:
+		printf("Stop Condition Detected by Slave\n");
+		break;
+	case I2C_ERROR_BERR:
+		printf("Bus Error\n");
+		break;
+	case I2C_ERROR_ARLO:
+		printf("Arbitration Lost Error\n");
+		break;
+	case I2C_ERROR_AF:
+		printf("Acknowledge Failure Error\n");
+		break;
+	case I2C_ERROR_OVR:
+		printf("Overrun/Underrun Error\n");
+		break;
+	case I2C_ERROR_TIMEOUT:
+		printf("Timeout Error\n");
+		break;
+	default:
+		printf("Unknown Error\n");
+		break;
+	}
 }
 
 

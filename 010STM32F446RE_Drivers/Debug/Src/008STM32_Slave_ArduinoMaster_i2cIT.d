@@ -1,5 +1,5 @@
-Src/007MasterSendtoSlave_I2C_interrupt.o: \
- ../Src/007MasterSendtoSlave_I2C_interrupt.c \
+Src/008STM32_Slave_ArduinoMaster_i2cIT.o: \
+ ../Src/008STM32_Slave_ArduinoMaster_i2cIT.c \
  D:/Embedded-C/MCUProjects/Git/STM32F446RE_Drivers/010STM32F446RE_Drivers/Drivers/Inc/stm32f446xx.h \
  D:/Embedded-C/MCUProjects/Git/STM32F446RE_Drivers/010STM32F446RE_Drivers/Drivers/Inc/stm32f446xx_gpio_driver.h \
  D:/Embedded-C/MCUProjects/Git/STM32F446RE_Drivers/010STM32F446RE_Drivers/Drivers/Inc/stm32f446xx.h \
