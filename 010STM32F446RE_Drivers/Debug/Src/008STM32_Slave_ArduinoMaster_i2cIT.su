@@ -1,7 +1,0 @@
-../Src/008STM32_Slave_ArduinoMaster_i2cIT.c:24:6:delay	16	static
-../Src/008STM32_Slave_ArduinoMaster_i2cIT.c:35:6:i2c_gpioinit	24	static
-../Src/008STM32_Slave_ArduinoMaster_i2cIT.c:54:6:i2c_init	8	static
-../Src/008STM32_Slave_ArduinoMaster_i2cIT.c:65:5:main	8	static
-../Src/008STM32_Slave_ArduinoMaster_i2cIT.c:92:6:I2C1_EV_IRQHandler	8	static
-../Src/008STM32_Slave_ArduinoMaster_i2cIT.c:98:6:I2C1_ER_IRQHandler	8	static
-../Src/008STM32_Slave_ArduinoMaster_i2cIT.c:104:6:I2C_ApplicationEventCallback	24	static

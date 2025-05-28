@@ -7,7 +7,7 @@
 
 
 #include <stdint.h>
-#include "stm32f446xx.h"
+#include "stm32f446xx_i2c_driver.h"
 
 
 static void i2c_startphase_addressphase(I2C_RegDef_t *pI2Cx, uint8_t SlaveAddr, uint8_t rw_bit);
@@ -21,7 +21,7 @@ static void I2C_CloseSendData(I2C_Handle_t *pI2CHandle);
  *
  * #brief		- enables or disables the peripheral clock for the given I2C port
  *
- * @param[in]	- I2C_RegDef_t *pI2Cx, pointer variable, input the SPI port base address here
+ * @param[in]	- I2C_RegDef_t *pI2Cx, pointer variable, input the I2C port base address here
  * @param[in]	- uint8_t EnorDi, input peripheral clock state here either "ENABLE" or "DISABLE"
  *
  * @return		- none
@@ -72,7 +72,7 @@ void I2C_PeripheralClkCtrl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi)
  *
  * #brief		- Enables or disables the I2C peripheral
  *
- * @param[in]	- I2C_RegDef_t *pI2Cx, pointer variable, input the SPI port base address here
+ * @param[in]	- I2C_RegDef_t *pI2Cx, pointer variable, input the I2C port base address here
  * @param[in]	- uint8_t EnorDi, input peripheral clock state here either "ENABLE" or "DISABLE"
  *
  * @return		- none
@@ -241,7 +241,7 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
  */
 void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN)
 {
-	uint16_t dummy_read __unused =0;
+	uint16_t dummy_read __unusedatr =0;
 
 	//start phase and address phase start
 	i2c_startphase_addressphase(pI2CHandle->pI2Cx, SlaveAddr, I2C_MASTER_WRITE);
@@ -293,7 +293,7 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
  */
 void I2C_MasterSendDataOLED(I2C_RegDef_t *pI2Cx, uint8_t ctrlByte, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN)
 {
-	uint16_t dummy_read __unused =0;
+	uint16_t dummy_read __unusedatr =0;
 
 	//start phase and address phase start
 	i2c_startphase_addressphase(pI2Cx, SlaveAddr, I2C_MASTER_WRITE);
@@ -413,7 +413,7 @@ uint8_t I2C_MasterSendDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint3
  */
 void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN)
 {
-	uint16_t dummy_read __unused =0;
+	uint16_t dummy_read __unusedatr =0;
 
 	//1. Generate the START condition
 
@@ -544,58 +544,7 @@ uint8_t I2C_MasterReceiveDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, ui
 	return busystate;
 }
 
-/*********************************************************************************************
- * @fn			- RCC_GetPCLK1Value
- *
- * #brief		- fetches the current APB1 bus clock value
- *
- * @param[in]	- none
- *
- * @return		- none
- *
- * @Note 		-
- */
-uint32_t RCC_GetPCLK1Value(void) {
-	uint32_t pclk1, system_clk;
-	uint8_t clk_src, ahb_prescaler, apb1_prescaler;
 
-	// Get the system clock source
-	clk_src = (RCC->CFGR >> 2) & 0x3;
-
-	if (clk_src == 0) {
-		// HSI oscillator used as system clock
-		system_clk = 16e+6; // HSI frequency is 16 MHz
-	} else if (clk_src == 1) {
-		// HSE oscillator used as system clock
-		system_clk = 8e+6; // Assume HSE frequency is 8 MHz
-	} else if (clk_src == 2) {
-		// PLL used as system clock
-		// Calculate PLL output frequency (not shown here for brevity)
-		//too complex, will add soon once I know how to use PLL as clock src.
-	}
-
-	// Get AHB prescaler
-	ahb_prescaler = (RCC->CFGR >> 4) & 0xF;
-	if (ahb_prescaler < 8) {
-		ahb_prescaler = 1; // No division
-	} else {
-		//this line is neat, this converts the binary value of the prescaler into its equivalent decimal value
-		ahb_prescaler = 1 << (ahb_prescaler - 7); // 2, 4, 8, ..., 512
-	}
-
-	// Get APB1 prescaler
-	apb1_prescaler = (RCC->CFGR >> 10) & 0x7;
-	if (apb1_prescaler < 4) {
-		apb1_prescaler = 1; // No division
-	} else {
-		apb1_prescaler = 1 << (apb1_prescaler - 3); // 2, 4, 8, 16
-	}
-
-	// Calculate PCLK1
-	pclk1 = (system_clk / ahb_prescaler) / apb1_prescaler;
-
-	return pclk1;
-}
 
 
 /*********************************************************************************************
@@ -636,7 +585,7 @@ uint8_t Get_TriseValue(I2C_Handle_t *pI2CHandle){
  *
  * #brief		- fetches the current flag status of the SR1 register
  *
- * @param[in]	- I2C_RegDef_t *pI2Cx, pointer variable, input the address of the structure variable
+ * @param[in]	- I2C_RegDef_t *pI2Cx, I2C peripheral base address
  * @param[in]	- uint8_t FlagName, input the flag name to be checked
  *
  * @return		- uint8_t, returns the flag status
@@ -729,7 +678,7 @@ static void i2c_startphase_addressphase(I2C_RegDef_t *pI2Cx, uint8_t SlaveAddr, 
  *
  * #brief		- Enables or disables the interrupt for the given IRQ number.
  *
- * @param[in]	- IRQNumber of the SPI peripheral. Has already defined macros refer to @IRQ_NUMBERS
+ * @param[in]	- IRQNumber of the I2C peripheral. Has already defined macros refer to @IRQ_NUMBERS
  * @param[in]	- IRQpriority, values 0 - 255 the lower the value the higher the priority of the interrupt
  *
  * @return		- none
@@ -766,7 +715,7 @@ void I2C_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi)
  *
  * #brief		- Sets the priority number of a specific IRQ number. Kinda like priority number queuing for interrupts.
  *
- * @param[in]	- IRQNumber of the SPI peripheral. Has already defined macros refer to @IRQ_NUMBERS
+ * @param[in]	- IRQNumber of the I2C peripheral. Has already defined macros refer to @IRQ_NUMBERS
  * @param[in]	- IRQpriority, values 0 - 255 the lower the value the higher the priority of the interrupt
  *
  * @return		- none
@@ -798,7 +747,7 @@ void I2C_Event_IRQHandling(I2C_Handle_t *pI2CHandle)
 {
 	//interrupt handling for both master and slave mode of device
 	uint8_t temp1, temp2, temp3;
-	uint16_t dummy_read __unused;
+	uint16_t dummy_read __unusedatr;
 
 	//check if ITEVTEN is set.
 	temp1 = (pI2CHandle->pI2Cx->CR2 >> I2C_CR2_ITEVTEN) & 0x0001;

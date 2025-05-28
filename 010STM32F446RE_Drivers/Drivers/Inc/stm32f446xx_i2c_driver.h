@@ -102,16 +102,16 @@ typedef struct
  ***********************************************************************************************************************/
 
 /*
- * SPI Peripheral Clock set-up
+ * I2C Peripheral Clock set-up
  */
-void I2C_PeripheralClkCtrl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi); //DONE
+void I2C_PeripheralClkCtrl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
 
 
 /*
  * I2C Initialization & De-initialization
  */
 void I2C_Init(I2C_Handle_t *pI2CHandle);
-void I2C_DeInit(I2C_RegDef_t *pI2Cx); //DONE
+void I2C_DeInit(I2C_RegDef_t *pI2Cx);
 
 
 /*
@@ -121,10 +121,9 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN);
 uint8_t I2C_MasterSendDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN);
 uint8_t I2C_MasterReceiveDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN);
-
+void I2C_MasterSendDataOLED(I2C_RegDef_t *pI2Cx, uint8_t ctrlByte, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr, uint8_t Repeated_Start_EN);
 void I2C_SlaveSendData(I2C_RegDef_t *pI2Cx, uint8_t data);
 uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2Cx);
-
 
 /*
  * Other peripheral APIs
@@ -132,7 +131,6 @@ uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2Cx);
 uint8_t I2C_GetSR1FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName);
 uint8_t I2C_GetSR2FlagStatus(I2C_RegDef_t *pI2Cx, uint8_t FlagName);
 void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi); //DONE
-uint32_t RCC_GetPCLK1Value(void);
 uint8_t Get_TriseValue(I2C_Handle_t *pI2CHandle);
 void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle, uint8_t event);
 void I2C_SlaveEn_CallbackEvents(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);

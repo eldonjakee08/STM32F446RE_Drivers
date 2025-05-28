@@ -191,8 +191,6 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 	temp = 0;
 
 	//3. Configure output type & output speed
-
-	//Only executes if user wants to set GPIO as output mode because no pushpull or open drain config for GPIO input mode
 	temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOType << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber) );
 	pGPIOHandle->pGPIOx->OTYPER &= ~(1 << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber) ); //clears the bit fields
 	pGPIOHandle->pGPIOx->OTYPER |= temp; //sets the bit fields

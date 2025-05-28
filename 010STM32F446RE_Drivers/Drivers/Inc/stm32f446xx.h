@@ -14,7 +14,7 @@
 
 #define __vo 		volatile
 #define __weak 		__attribute__((weak))
-#define __unused	__attribute__((unused))
+#define __unusedatr	__attribute__((unused))
 
 /***************************************START: Processor Specific Details ****************************/
 /*
@@ -174,7 +174,9 @@
 #define QUADSPI_BASEADDR	0xA0001000U			/*QUAD SPI BASE ADDRESS, curious on what this does*/
 #define FMCCTRL_BASEADDR	0xA0000000U			/*FMC Register base addr, curious as well on what this does*/
 
-/*********************************peripheral registers definition structures*********************///
+
+
+/*********************************peripheral registers definition structures**********************************/
 
 /*GPIO Peripheral registers definitions*/
 typedef struct
@@ -306,6 +308,22 @@ typedef struct
 }I2C_RegDef_t;
 
 
+/*
+ * peripheral register definition of USART
+ */
+typedef struct
+{
+	__vo uint32_t SR;		//USART status register (USART_SR)
+	__vo uint32_t DR;		//USART data register (USART_DR)
+	__vo uint32_t BRR;		//USART baud rate register (USART_BRR)
+	__vo uint32_t CR1;		//USART control register 1 (USART_CR1)
+	__vo uint32_t CR2;		//USART control register 2 (USART_CR2)
+	__vo uint32_t CR3;		//USART control register 3 (USART_CR3)
+	__vo uint32_t GTPR;		//USART guard time and prescaler register (USART_GTPR)
+
+}USART_RegDef_t;
+
+/*************************************End of peripheral register definition structures***********************************/
 
 /*stm32f446rexx pointer macros for ease of typing when initializing the pointer values*/
 #define GPIOA 		((GPIO_RegDef_t*)GPIOA_BASEADDR) /*GPIOA_BASEADDR typecasted as a pointer of type GPIO_RegDef_t */
@@ -330,6 +348,12 @@ typedef struct
 #define I2C2		((I2C_RegDef_t*)I2C2_BASEADDR)
 #define I2C3		((I2C_RegDef_t*)I2C3_BASEADDR)
 
+#define USART1		((USART_RegDef_t*)USART1_BASEADDR)	//USART1 base address typecasted as a pointer of type USART_RegDef_t
+#define USART2		((USART_RegDef_t*)USART2_BASEADDR)	//USART2 base address typecasted as a pointer of type USART_RegDef_t
+#define USART3		((USART_RegDef_t*)USART3_BASEADDR)	//USART3 base address typecasted as a pointer of type USART_RegDef_t
+#define UART4		((USART_RegDef_t*)UART4_BASEADDR)	//UART4 base address typecasted as a pointer of type USART_RegDef_t
+#define UART5		((USART_RegDef_t*)UART5_BASEADDR)	//UART5 base address typecasted as a pointer of type USART_RegDef_t
+#define USART6		((USART_RegDef_t*)USART6_BASEADDR)	//USART6 base address typecasted as a pointer of type USART_RegDef_t
 
 
 /*
@@ -468,6 +492,17 @@ typedef struct
 
 
 /*
+ * Resets the USART peripherals with the use of RCC APB2 & APB1 peripheral reset register
+ */
+#define USART1_REG_RESET()		do{ (RCC->APB2_RSTR |= (1 << 4) ); (RCC->APB2_RSTR &= ~(1 << 4) );} while(0)
+#define USART2_REG_RESET()		do{ (RCC->APB1_RSTR |= (1 << 17) ); (RCC->APB2_RSTR &= ~(1 << 17) );} while(0)
+#define USART3_REG_RESET()		do{ (RCC->APB1_RSTR |= (1 << 18) ); (RCC->APB2_RSTR &= ~(1 << 18) );} while(0)
+#define UART4_REG_RESET()		do{ (RCC->APB1_RSTR |= (1 << 19) ); (RCC->APB2_RSTR &= ~(1 << 19) );} while(0)
+#define UART5_REG_RESET()		do{ (RCC->APB1_RSTR |= (1 << 20) ); (RCC->APB2_RSTR &= ~(1 << 20) );} while(0)
+#define USART6_REG_RESET()		do{ (RCC->APB2_RSTR |= (1 << 5) ); (RCC->APB2_RSTR &= ~(1 << 5) );} while(0)
+
+
+/*
  * This macro translates the GPIO port base address to SYSCFG EXTI code for programming the SYSCFG_EXTICR peripheral register
  * This macro definition accepts an input parameter, which is the 1st time I've encountered this.
  * This uses ternary operator, if x == GPIOA is true then it returns the "0" value, if statement is false it moves on
@@ -496,7 +531,12 @@ typedef struct
 		(x == I2C2)?1:\
 				(x == I2C3)?2:0)
 
-
+#define USART_BASEADDR_TO_CODE(x) (	(x == USART1)?0:\
+        (x == USART2)?1:\
+                (x == USART3)?2:\
+                        (x == UART4)?3:\
+                                (x == UART5)?4:\
+                                        (x == USART6)?5:0)
 
 /*
  * @IRQ_NUMBERS
@@ -521,6 +561,13 @@ typedef struct
 #define IRQ_NUMBER_I2C2_ERR		41
 #define IRQ_NUMBER_I2C3_EVENT	72
 #define IRQ_NUMBER_I2C3_ERR		73
+
+#define IRQ_NUMBER_USART1		37
+#define IRQ_NUMBER_USART2		38
+#define IRQ_NUMBER_USART3		39
+#define IRQ_NUMBER_UART4		52
+#define IRQ_NUMBER_UART5		53
+#define IRQ_NUMBER_USART6		71
 
 
 /*
@@ -628,7 +675,67 @@ typedef struct
 #define I2C_OAR1_ADD7_1			1
 #define I2C_OAR1_BIT14			14
 
+
+/*
+ * USART/UART PERIPHERAL BIT POSITION
+ */
+#define USART_SR_PE			0
+#define USART_SR_FE			1
+#define USART_SR_NE			2
+#define USART_SR_ORE		3
+#define USART_SR_IDLE		4
+#define USART_SR_RXNE		5
+#define USART_SR_TC			6
+#define USART_SR_TXE		7
+#define USART_SR_LBD		8
+#define USART_SR_CTS		9
+
+#define USART_CR1_SBK		0
+#define USART_CR1_RWU		1
+#define USART_CR1_RE		2
+#define USART_CR1_TE		3
+#define USART_CR1_IDLEIE	4
+#define USART_CR1_RXNEIE	5
+#define USART_CR1_TCIE		6
+#define USART_CR1_TXEIE		7
+#define USART_CR1_PEIE		8
+#define USART_CR1_PS		9
+#define USART_CR1_PCE		10
+#define USART_CR1_WAKE		11
+#define USART_CR1_M			12
+#define USART_CR1_UE		13
+#define USART_CR1_OVER8		15
+
+#define USART_CR2_ADD		0
+#define USART_CR2_LBDL		5
+#define USART_CR2_LBDIE		6
+#define USART_CR2_LBCL		8
+#define USART_CR2_CPHA		9
+#define USART_CR2_CPOL		10
+#define USART_CR2_CLKEN		11
+#define USART_CR2_STOP		12
+#define USART_CR2_LINEN		14
+
+#define USART_CR3_EIE		0
+#define USART_CR3_IREN		1
+#define USART_CR3_IRLP		2
+#define USART_CR3_HDSEL		3
+#define USART_CR3_NACK		4
+#define USART_CR3_SCEN		5
+#define USART_CR3_DMAR		6
+#define USART_CR3_DMAT		7
+#define USART_CR3_RTSE		8
+#define USART_CR3_CTSE		9
+#define USART_CR3_CTSIE		10
+#define USART_CR3_ONEBIT	11
+
+#define USART_GTPR_PSC		0
+#define USART_GTPR_GT		8
+
+
 #include 	"stm32f446xx_gpio_driver.h"
 #include 	"stm32f446xx_spi_driver.h"
 #include 	"stm32f446xx_i2c_driver.h"
+#include 	"stm32f446xx_usart_driver.h"
+#include 	"stm32f446xx_rcc_driver.h"
 #endif /* INC_STM32F446XX_H_ */
