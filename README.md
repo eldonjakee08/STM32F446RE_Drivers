@@ -3,7 +3,7 @@ Custom peripheral drivers for the STM32F446 microcontroller, developed using a b
 
 This is not an attempt to reinvent the wheel nor do i claim that this runs faster or better than the existing manufacturer HAL. 
 
-This instead, is my way of learning the inner workings of an MCU or even the inner workings of HALs (Hardware Abstraction Layers)
+This instead, is my way of learning the inner workings of an MCU.
 
 # Supported Peripheral Drivers
 1. GPIO Drivers 
